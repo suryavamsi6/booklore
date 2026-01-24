@@ -99,4 +99,10 @@ public class UserBookProgressEntity {
 
     @Column(name = "personal_rating")
     private Integer personalRating;
+
+    @Column(name = "hardcover_last_synced_progress")
+    private Float hardcoverLastSyncedProgress;
+
+    @Column(name = "hardcover_last_sync_time")
+    private Instant hardcoverLastSyncTime;
 }

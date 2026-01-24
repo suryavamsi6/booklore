@@ -3,7 +3,9 @@ package com.adityachandel.booklore.service.hardcover;
 import com.adityachandel.booklore.model.dto.HardcoverSyncSettings;
 import com.adityachandel.booklore.model.entity.BookEntity;
 import com.adityachandel.booklore.model.entity.BookMetadataEntity;
+import com.adityachandel.booklore.model.entity.UserBookProgressEntity;
 import com.adityachandel.booklore.repository.BookRepository;
+import com.adityachandel.booklore.repository.UserBookProgressRepository;
 import com.adityachandel.booklore.service.metadata.parser.hardcover.GraphQLRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -32,41 +35,59 @@ public class HardcoverSyncService {
     private static final String HARDCOVER_API_URL = "https://api.hardcover.app/v1/graphql";
     private static final int STATUS_CURRENTLY_READING = 2;
     private static final int STATUS_READ = 3;
+    private static final float PROGRESS_CHANGE_THRESHOLD = 1.0f; // Minimum progress change to trigger sync
 
     private final RestClient restClient;
     private final HardcoverSyncSettingsService hardcoverSyncSettingsService;
     private final BookRepository bookRepository;
+    private final UserBookProgressRepository userBookProgressRepository;
 
     // Thread-local to hold the current API token for GraphQL requests
     private final ThreadLocal<String> currentApiToken = new ThreadLocal<>();
 
     @Autowired
-    public HardcoverSyncService(HardcoverSyncSettingsService hardcoverSyncSettingsService, BookRepository bookRepository) {
+    public HardcoverSyncService(HardcoverSyncSettingsService hardcoverSyncSettingsService, 
+                                 BookRepository bookRepository,
+                                 UserBookProgressRepository userBookProgressRepository) {
         this.hardcoverSyncSettingsService = hardcoverSyncSettingsService;
         this.bookRepository = bookRepository;
+        this.userBookProgressRepository = userBookProgressRepository;
         this.restClient = RestClient.builder()
                 .baseUrl(HARDCOVER_API_URL)
                 .build();
     }
 
     /**
-     * Asynchronously sync Kobo reading progress to Hardcover.
+     * Asynchronously sync reading progress to Hardcover.
      * This method is non-blocking and will not fail the calling process if sync fails.
      * Uses the user's personal Hardcover API key if configured.
+     * Skips sync if progress hasn't changed significantly or if book was already synced at 100%.
      *
-     * @param bookId The book ID to sync progress for
-     * @param progressPercent The reading progress as a percentage (0-100)
-     * @param userId The user ID whose reading progress is being synced
+     * @param userProgress The user's book progress entity containing current progress
      */
     @Async
-    @Transactional(readOnly = true)
-    public void syncProgressToHardcover(Long bookId, Float progressPercent, Long userId) {
+    @Transactional
+    public void syncProgressToHardcover(UserBookProgressEntity userProgress) {
+        if (userProgress == null) {
+            log.debug("Hardcover sync skipped: userProgress is null");
+            return;
+        }
+
+        Long bookId = userProgress.getBook().getId();
+        Float progressPercent = getEffectiveProgress(userProgress);
+        Long userId = userProgress.getUser().getId();
+
         try {
             // Get user's Hardcover settings
             HardcoverSyncSettings userSettings = hardcoverSyncSettingsService.getSettingsForUserId(userId);
             
             if (!isHardcoverSyncEnabledForUser(userSettings)) {
                 log.trace("Hardcover sync skipped for user {}: not enabled or no API token configured", userId);
+                return;
+            }
+
+            // Check if sync should be skipped based on progress tracking
+            if (shouldSkipSync(userProgress, progressPercent)) {
                 return;
             }
 
@@ -144,6 +165,9 @@ public class HardcoverSyncService {
                 if (success) {
                     log.info("Synced progress to Hardcover: userId={}, book={}, hardcoverBookId={}, progress={}% ({}pages)", 
                             userId, bookId, hardcoverBook.bookId, Math.round(progressPercent), progressPages);
+                    
+                    // Update tracking fields to prevent redundant syncs
+                    updateSyncTrackingFields(userProgress, progressPercent);
                 }
 
             } finally {
@@ -172,6 +196,70 @@ public class HardcoverSyncService {
 
     private String getApiToken() {
         return currentApiToken.get();
+    }
+
+    /**
+     * Determine the effective progress percentage from user progress entity.
+     * Prioritizes Kobo progress, then Koreader progress.
+     */
+    private Float getEffectiveProgress(UserBookProgressEntity progress) {
+        if (progress.getKoboProgressPercent() != null) {
+            return progress.getKoboProgressPercent();
+        }
+        if (progress.getKoreaderProgressPercent() != null) {
+            // Koreader progress is stored as a fraction (0-1), convert to percentage
+            return progress.getKoreaderProgressPercent() * 100.0f;
+        }
+        return null;
+    }
+
+    /**
+     * Check if sync should be skipped based on progress tracking.
+     * Returns true if:
+     * - Progress hasn't changed significantly (less than threshold)
+     * - Book was already synced at 100% completion
+     */
+    private boolean shouldSkipSync(UserBookProgressEntity userProgress, Float progressPercent) {
+        if (progressPercent == null) {
+            log.debug("Hardcover sync skipped: no progress to sync");
+            return true;
+        }
+
+        Float lastSyncedProgress = userProgress.getHardcoverLastSyncedProgress();
+        
+        // If never synced before, don't skip
+        if (lastSyncedProgress == null) {
+            log.debug("Hardcover sync: first sync for book {}", userProgress.getBook().getId());
+            return false;
+        }
+
+        // If already synced at 100%, skip further syncs
+        if (lastSyncedProgress >= 99.0f) {
+            log.debug("Hardcover sync skipped: book {} already synced at completion ({}%)", 
+                    userProgress.getBook().getId(), lastSyncedProgress);
+            return true;
+        }
+
+        // Skip if progress change is below threshold
+        float progressChange = Math.abs(progressPercent - lastSyncedProgress);
+        if (progressChange < PROGRESS_CHANGE_THRESHOLD) {
+            log.debug("Hardcover sync skipped: progress change too small ({}% -> {}%, change: {}%)", 
+                    lastSyncedProgress, progressPercent, progressChange);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Update the Hardcover sync tracking fields after a successful sync.
+     */
+    private void updateSyncTrackingFields(UserBookProgressEntity userProgress, Float progressPercent) {
+        userProgress.setHardcoverLastSyncedProgress(progressPercent);
+        userProgress.setHardcoverLastSyncTime(Instant.now());
+        userBookProgressRepository.save(userProgress);
+        log.debug("Updated Hardcover sync tracking: book={}, progress={}%", 
+                userProgress.getBook().getId(), progressPercent);
     }
 
     /**

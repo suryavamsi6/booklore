@@ -171,11 +171,11 @@ public class KoboReadingStateService {
                 updateReadStatusFromKoboProgress(progress, now);
             }
             
-            progressRepository.save(progress);
+            UserBookProgressEntity savedProgress = progressRepository.save(progress);
             log.debug("Synced Kobo progress: bookId={}, progress={}%", bookId, progress.getKoboProgressPercent());
             
             // Sync progress to Hardcover asynchronously (if enabled for this user)
-            hardcoverSyncService.syncProgressToHardcover(book.getId(), progress.getKoboProgressPercent(), userId);
+            hardcoverSyncService.syncProgressToHardcover(savedProgress);
         } catch (NumberFormatException e) {
             log.warn("Invalid entitlement ID format: {}", readingState.getEntitlementId());
         }

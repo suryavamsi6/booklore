@@ -2,8 +2,11 @@ package com.adityachandel.booklore.service.hardcover;
 
 import com.adityachandel.booklore.model.dto.HardcoverSyncSettings;
 import com.adityachandel.booklore.model.entity.BookEntity;
+import com.adityachandel.booklore.model.entity.BookLoreUserEntity;
 import com.adityachandel.booklore.model.entity.BookMetadataEntity;
+import com.adityachandel.booklore.model.entity.UserBookProgressEntity;
 import com.adityachandel.booklore.repository.BookRepository;
+import com.adityachandel.booklore.repository.UserBookProgressRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +39,9 @@ class HardcoverSyncServiceTest {
     private BookRepository bookRepository;
 
     @Mock
+    private UserBookProgressRepository userBookProgressRepository;
+
+    @Mock
     private RestClient restClient;
 
     @Mock
@@ -51,6 +57,7 @@ class HardcoverSyncServiceTest {
 
     private BookEntity testBook;
     private BookMetadataEntity testMetadata;
+    private BookLoreUserEntity testUser;
     private HardcoverSyncSettings hardcoverSyncSettings;
 
     private static final Long TEST_BOOK_ID = 100L;
@@ -59,12 +66,15 @@ class HardcoverSyncServiceTest {
     @BeforeEach
     void setUp() throws Exception {
         // Create service with mocked dependencies
-        service = new HardcoverSyncService(hardcoverSyncSettingsService, bookRepository);
+        service = new HardcoverSyncService(hardcoverSyncSettingsService, bookRepository, userBookProgressRepository);
         
         // Inject our mocked restClient using reflection
         Field restClientField = HardcoverSyncService.class.getDeclaredField("restClient");
         restClientField.setAccessible(true);
         restClientField.set(service, restClient);
+
+        testUser = new BookLoreUserEntity();
+        testUser.setId(TEST_USER_ID);
 
         testBook = new BookEntity();
         testBook.setId(TEST_BOOK_ID);
@@ -81,6 +91,7 @@ class HardcoverSyncServiceTest {
 
         when(hardcoverSyncSettingsService.getSettingsForUserId(TEST_USER_ID)).thenReturn(hardcoverSyncSettings);
         when(bookRepository.findById(TEST_BOOK_ID)).thenReturn(Optional.of(testBook));
+        when(userBookProgressRepository.save(any(UserBookProgressEntity.class))).thenAnswer(i -> i.getArgument(0));
         
         // Setup RestClient mock chain - handles multiple calls
         when(restClient.post()).thenReturn(requestBodyUriSpec);
@@ -90,6 +101,19 @@ class HardcoverSyncServiceTest {
         when(requestBodySpec.retrieve()).thenReturn(responseSpec);
     }
 
+    private UserBookProgressEntity createUserProgress(Float koboProgress) {
+        return createUserProgress(koboProgress, null);
+    }
+
+    private UserBookProgressEntity createUserProgress(Float koboProgress, Float lastSyncedProgress) {
+        UserBookProgressEntity progress = new UserBookProgressEntity();
+        progress.setBook(testBook);
+        progress.setUser(testUser);
+        progress.setKoboProgressPercent(koboProgress);
+        progress.setHardcoverLastSyncedProgress(lastSyncedProgress);
+        return progress;
+    }
+
     // === Tests for skipping sync (no API calls should be made) ===
 
     @Test
@@ -97,7 +121,7 @@ class HardcoverSyncServiceTest {
     void syncProgressToHardcover_whenHardcoverDisabled_shouldSkip() {
         hardcoverSyncSettings.setHardcoverSyncEnabled(false);
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, never()).post();
     }
@@ -107,7 +131,7 @@ class HardcoverSyncServiceTest {
     void syncProgressToHardcover_whenApiKeyMissing_shouldSkip() {
         hardcoverSyncSettings.setHardcoverApiKey(null);
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, never()).post();
     }
@@ -117,7 +141,7 @@ class HardcoverSyncServiceTest {
     void syncProgressToHardcover_whenApiKeyBlank_shouldSkip() {
         hardcoverSyncSettings.setHardcoverApiKey("   ");
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, never()).post();
     }
@@ -125,17 +149,15 @@ class HardcoverSyncServiceTest {
     @Test
     @DisplayName("Should skip sync when progress is null")
     void syncProgressToHardcover_whenProgressNull_shouldSkip() {
-        service.syncProgressToHardcover(TEST_BOOK_ID, null, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(null));
 
         verify(restClient, never()).post();
     }
 
     @Test
-    @DisplayName("Should skip sync when book not found")
-    void syncProgressToHardcover_whenBookNotFound_shouldSkip() {
-        when(bookRepository.findById(TEST_BOOK_ID)).thenReturn(Optional.empty());
-
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+    @DisplayName("Should skip sync when userProgress is null")
+    void syncProgressToHardcover_whenUserProgressNull_shouldSkip() {
+        service.syncProgressToHardcover(null);
 
         verify(restClient, never()).post();
     }
@@ -145,7 +167,7 @@ class HardcoverSyncServiceTest {
     void syncProgressToHardcover_whenNoMetadata_shouldSkip() {
         testBook.setMetadata(null);
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, never()).post();
     }
@@ -156,7 +178,7 @@ class HardcoverSyncServiceTest {
         testMetadata.setIsbn13(null);
         testMetadata.setIsbn10(null);
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, never()).post();
     }
@@ -175,7 +197,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createEmptyUserBookReadsResponse())
                 .thenReturn(createInsertUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         // Verify API was called at least once (using stored ID, no search needed)
         verify(restClient, atLeastOnce()).post();
@@ -191,7 +213,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createEmptyUserBookReadsResponse())
                 .thenReturn(createInsertUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         // Verify API was called at least once
         verify(restClient, atLeastOnce()).post();
@@ -203,7 +225,7 @@ class HardcoverSyncServiceTest {
         // Mock: search returns empty results
         when(responseSpec.body(Map.class)).thenReturn(createEmptySearchResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         // Should call search only
         verify(restClient, times(1)).post();
@@ -220,7 +242,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createEmptyUserBookReadsResponse())
                 .thenReturn(createInsertUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 99.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(99.0f));
 
         verify(restClient, atLeastOnce()).post();
     }
@@ -236,7 +258,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createEmptyUserBookReadsResponse())
                 .thenReturn(createInsertUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, atLeastOnce()).post();
     }
@@ -254,7 +276,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createEmptyUserBookReadsResponse())
                 .thenReturn(createInsertUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, atLeastOnce()).post();
     }
@@ -271,7 +293,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createFindUserBookReadResponse(6001))
                 .thenReturn(createUpdateUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, atLeastOnce()).post();
     }
@@ -288,7 +310,7 @@ class HardcoverSyncServiceTest {
                 .thenReturn(createEmptyUserBookReadsResponse())
                 .thenReturn(createInsertUserBookReadResponse());
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, atLeastOnce()).post();
     }
@@ -303,7 +325,7 @@ class HardcoverSyncServiceTest {
 
         when(responseSpec.body(Map.class)).thenReturn(Map.of("errors", List.of(Map.of("message", "Unauthorized"))));
 
-        assertDoesNotThrow(() -> service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID));
+        assertDoesNotThrow(() -> service.syncProgressToHardcover(createUserProgress(50.0f)));
     }
 
     @Test
@@ -314,7 +336,7 @@ class HardcoverSyncServiceTest {
 
         when(responseSpec.body(Map.class)).thenReturn(null);
 
-        assertDoesNotThrow(() -> service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID));
+        assertDoesNotThrow(() -> service.syncProgressToHardcover(createUserProgress(50.0f)));
     }
 
     @Test
@@ -322,9 +344,52 @@ class HardcoverSyncServiceTest {
     void syncProgressToHardcover_whenUserSettingsNotFound_shouldSkip() {
         when(hardcoverSyncSettingsService.getSettingsForUserId(TEST_USER_ID)).thenReturn(null);
 
-        service.syncProgressToHardcover(TEST_BOOK_ID, 50.0f, TEST_USER_ID);
+        service.syncProgressToHardcover(createUserProgress(50.0f));
 
         verify(restClient, never()).post();
+    }
+
+    // === Tests for new skip logic ===
+
+    @Test
+    @DisplayName("Should skip sync when progress change is below threshold")
+    void syncProgressToHardcover_whenProgressChangeBelowThreshold_shouldSkip() {
+        testMetadata.setHardcoverBookId(12345);
+        testMetadata.setPageCount(300);
+
+        // Last synced at 50%, current is 50.5% - below 1% threshold
+        service.syncProgressToHardcover(createUserProgress(50.5f, 50.0f));
+
+        verify(restClient, never()).post();
+    }
+
+    @Test
+    @DisplayName("Should skip sync when book was already synced at completion")
+    void syncProgressToHardcover_whenAlreadySyncedAtCompletion_shouldSkip() {
+        testMetadata.setHardcoverBookId(12345);
+        testMetadata.setPageCount(300);
+
+        // Last synced at 100%, current is still 100%
+        service.syncProgressToHardcover(createUserProgress(100.0f, 100.0f));
+
+        verify(restClient, never()).post();
+    }
+
+    @Test
+    @DisplayName("Should sync when progress change is above threshold")
+    void syncProgressToHardcover_whenProgressChangeAboveThreshold_shouldSync() {
+        testMetadata.setHardcoverBookId(12345);
+        testMetadata.setPageCount(300);
+
+        when(responseSpec.body(Map.class))
+                .thenReturn(createInsertUserBookResponse(5001, null))
+                .thenReturn(createEmptyUserBookReadsResponse())
+                .thenReturn(createInsertUserBookReadResponse());
+
+        // Last synced at 50%, current is 52% - above 1% threshold
+        service.syncProgressToHardcover(createUserProgress(52.0f, 50.0f));
+
+        verify(restClient, atLeastOnce()).post();
     }
 
     // === Helper methods to create mock responses ===

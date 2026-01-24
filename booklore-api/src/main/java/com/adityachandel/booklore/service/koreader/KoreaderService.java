@@ -77,12 +77,11 @@ public class KoreaderService {
         UserBookProgressEntity userProgress = getOrCreateUserProgress(user, book);
         updateProgressData(userProgress, koProgress, authDetails.isSyncWithBookloreReader(), book);
 
-        progressRepository.save(userProgress);
+        UserBookProgressEntity savedProgress = progressRepository.save(userProgress);
 
         log.info("saveProgress: saved progress='{}' percentage={} for userId={} bookHash={}", koProgress.getProgress(), koProgress.getPercentage(), authDetails.getBookLoreUserId(), bookHash);
 
-        Float progressPercent = normalizeProgressPercent(koProgress.getPercentage());
-        hardcoverSyncService.syncProgressToHardcover(book.getId(), progressPercent, authDetails.getBookLoreUserId());
+        hardcoverSyncService.syncProgressToHardcover(savedProgress);
     }
 
     private void updateProgressData(UserBookProgressEntity userProgress, KoreaderProgress koProgress, boolean syncWithBookloreReader, BookEntity book) {
