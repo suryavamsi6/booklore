@@ -1,18 +1,23 @@
 import {RxStompConfig} from '@stomp/rx-stomp';
-import {API_CONFIG} from '../../config/api-config';
-import {AuthService} from '../../core/service/auth.service';
+import {AuthService} from '../service/auth.service';
+import {API_CONFIG} from '../../core/config/api-config';
 
 export function createRxStompConfig(authService: AuthService): RxStompConfig {
   return {
     brokerURL: API_CONFIG.BROKER_URL,
     heartbeatIncoming: 0,
     heartbeatOutgoing: 20000,
-    reconnectDelay: 200,
+    reconnectDelay: 10000,
     beforeConnect: (stomp) => {
-      stomp.stompClient.connectHeaders = {'Authorization': `Bearer ${authService.getToken()}`};
+      const token = authService.getInternalAccessToken();
+      if (token) {
+        stomp.stompClient.connectHeaders = {
+          'Authorization': `Bearer ${token}`,
+        };
+      }
     },
     debug: (msg: string): void => {
-      //console.log(new Date(), msg);
+      // console.log(new Date(), msg);
     },
   };
 }

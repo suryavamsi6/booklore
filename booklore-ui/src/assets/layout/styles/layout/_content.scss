@@ -3,9 +3,9 @@
 .layout-main-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100dvh;
   justify-content: space-between;
-  padding: 5.2rem 1.2rem 2rem 3.6rem;
+  padding: 5rem 1.1rem 1.1rem 3.6rem;
   transition: margin-left variables.$transitionDuration;
   position: fixed;
   width: 100%;

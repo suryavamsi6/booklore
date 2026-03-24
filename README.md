@@ -1,127 +1,335 @@
-# BookLore
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-with-text-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/logo-with-text-light.svg">
+    <img src="assets/logo-with-text-light.svg" alt="BookLore" height="80" />
+  </picture>
+</p>
 
-BookLore is a self-hosted web app for organizing and managing your personal book collection. It provides an intuitive interface to browse, read, and track your progress across PDFs and eBooks. With robust metadata management, multi-user support, and a sleek, modern UI, BookLore makes it easy to build and explore your personal library.
+<p align="center"><strong>Your books deserve a home. This is it.</strong></p>
 
-![BookLore Screenshot](assets/booklore-screenshot.jpg)
+<p align="center">
+BookLore is a self-hosted app that brings your entire book collection under one roof.<br/>
+Organize, read, annotate, sync across devices, and share, all without relying on third-party services.
+</p>
 
-> ⚠️ **Warning:**  
-> This project is in early development by a sole developer. Expect bugs, missing features, and frequent changes.  
-> **Data Loss Risk:** Non-backwards compatible database changes may result in loss of metadata, such as book titles, authors, and reading progress. Your actual book files (PDFs and ePubs) are unlikely to be affected, but it's always a good idea to keep a backup of both your database and your book files.  
-> **Limited Support:** As this is a one-person project, support may be slow, and features could be experimental or incomplete. Contributions and feedback are welcome!
+<p align="center">
+  <a href="https://github.com/booklore-app/booklore/releases"><img src="https://img.shields.io/github/v/release/adityachandelgit/BookLore?color=818CF8&style=flat-square&logo=github" alt="Release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/adityachandelgit/BookLore?color=fab005&style=flat-square" alt="License" /></a>
+  <a href="https://hub.docker.com/r/booklore/booklore"><img src="https://img.shields.io/docker/pulls/booklore/booklore?color=2496ED&style=flat-square&logo=docker&logoColor=white" alt="Docker Pulls" /></a>
+  <a href="https://github.com/booklore-app/booklore/stargazers"><img src="https://img.shields.io/github/stars/adityachandelgit/BookLore?style=flat-square&color=ffd43b" alt="Stars" /></a>
+  <a href="https://discord.gg/Ee5hd458Uz"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord" /></a>
+  <a href="https://opencollective.com/booklore"><img src="https://img.shields.io/opencollective/all/booklore?style=flat-square&color=7FADF2&logo=opencollective" alt="Open Collective" /></a>
+  <a href="https://hosted.weblate.org/engage/booklore/"><img src="https://img.shields.io/weblate/progress/booklore?style=flat-square&logo=weblate&logoColor=white&color=2ECCAA" alt="Translate" /></a>
+</p>
 
-## Key Features
-- **Modern, Responsive UI** – A sleek, highly reactive, and fluent interface for a seamless reading experience.
-- **Organized Book Management** – Categorize books using Libraries and Shelves for better organization.
-- **Smart Metadata Handling** – Automatically fetch book details from sources like Goodreads, Amazon, and Google Books, or edit them manually.
-- **Multi-User Support** – Admins can create user accounts, assign libraries, and manage permissions for metadata edits, uploads, and downloads.
-- **Powerful eBook & PDF Reader** – A feature-rich reader for PDFs and ePubs, with per-user progress tracking and customizable reading settings.
-- **And More to Come!** – Continuous improvements and exciting new features are in development.
+<p align="center">
+  <a href="https://booklore.org/">🌐 Website</a> ·
+  <a href="https://booklore.org/docs/getting-started">📖 Docs</a> ·
+  <a href="#-live-demo">🎮 Demo</a> ·
+  <a href="#-quick-start">🚀 Quick Start</a> ·
+  <a href="https://discord.gg/Ee5hd458Uz">💬 Discord</a>
+</p>
 
-BookLore is perfect for self-hosters who want complete control over their digital library. Stay tuned for updates!
+<p align="center">
+  <img src="assets/demo.gif" alt="BookLore Demo" width="800" />
+</p>
 
-## Video Guides & Tutorials
+---
 
-For a step-by-step walkthrough, check out the official BookLore video guides on YouTube:
+## ✨ Features
 
-📺 [BookLore Tutorials – YouTube](https://www.youtube.com/watch?v=UMrn_fIeFRo&list=PLi0fq0zaM7lqY7dX0R66jQtKW64z4_Tdz)
+| | Feature | Description |
+|:---:|:---|:---|
+| 📚 | **Smart Shelves** | Custom and dynamic shelves that organize themselves with rule-based Magic Shelves, filters, and full-text search |
+| 🔍 | **Automatic Metadata** | Covers, descriptions, reviews, and ratings pulled from Google Books, Open Library, and Amazon, all editable |
+| 📖 | **Built-in Reader** | Open PDFs, EPUBs, and comics right in the browser with annotations, highlights, and reading progress |
+| 🔄 | **Device Sync** | Connect your Kobo, use any OPDS-compatible app, or sync progress with KOReader. Your library follows you everywhere |
+| 👥 | **Multi-User Ready** | Individual shelves, progress, and preferences per user with local or OIDC authentication |
+| 📥 | **BookDrop** | Drop files into a watched folder and BookLore detects, enriches, and queues them for import automatically |
+| 📧 | **One-Click Sharing** | Send any book to a Kindle, an email address, or a friend instantly |
 
-These videos cover deployment, configuration, and feature highlights to help you get started quickly.
+---
 
-## Deploy with Docker
+## 🚀 Quick Start
 
-You can quickly set up and run BookLore using Docker.
+> [!TIP]
+> Looking for OIDC setup, advanced config, or upgrade guides? See the [full documentation](https://booklore.org/docs/getting-started).
 
-### 1️⃣ Install Docker & Docker Compose
+All you need is [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
-Ensure you have [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) installed.
+<details>
+<summary><strong>📦 Image Repositories</strong></summary>
 
-### 2️⃣ Create a `.env` file
+| Registry | Image |
+|----------|-------|
+| Docker Hub | `booklore/booklore` |
+| GitHub Container Registry | `ghcr.io/booklore-app/booklore` |
 
-Create a `.env` file to store environment variables.
+> Legacy images at `ghcr.io/adityachandelgit/booklore-app` remain available but won't receive updates.
+
+</details>
+
+### Step 1: Environment Configuration
+
+Create a `.env` file:
 
 ```ini
-# Docker image version
-BOOKLORE_IMAGE_TAG=latest
-
-# User and timezone settings
-PUID=1000
-PGID=1000
+# Application
+APP_USER_ID=1000
+APP_GROUP_ID=1000
 TZ=Etc/UTC
 
-# Database credentials (Replace with a secure password)
-MYSQL_ROOT_PASSWORD=your_secure_password
+# Database
+DATABASE_URL=jdbc:mariadb://mariadb:3306/booklore
+DB_USER=booklore
+DB_PASSWORD=ChangeMe_BookLoreApp_2025!
 
-# Paths for Docker volumes (Update these paths as per your system)
-BOOKLORE_DATA_PATH=/path/to/booklore/data       # Example: /home/user/booklore/data
-BOOKLORE_BOOKS_PATH=/path/to/booklore/books     # Example: /home/user/booklore/books
-MARIADB_CONFIG_PATH=/path/to/mariadb/config     # Example: /home/user/booklore/mariadb/config
+# Storage: LOCAL (default) or NETWORK (disables file operations, see Network Storage section below)
+DISK_TYPE=LOCAL
 
+# MariaDB
+DB_USER_ID=1000
+DB_GROUP_ID=1000
+MYSQL_ROOT_PASSWORD=ChangeMe_MariaDBRoot_2025!
+MYSQL_DATABASE=booklore
 ```
 
-### 3️⃣ Create docker-compose.yml
+### Step 2: Docker Compose
 
-Create a `docker-compose.yml` file in your project directory:
+Create a `docker-compose.yml`:
 
-```ini
-version: '3.8'
-
+```yaml
 services:
   booklore:
-    image: ghcr.io/adityachandelgit/booklore-app:${BOOKLORE_IMAGE_TAG}
+    image: booklore/booklore:latest
+    # Alternative: ghcr.io/booklore-app/booklore:latest
     container_name: booklore
-    env_file:
-      - .env
+    environment:
+      - USER_ID=${APP_USER_ID}
+      - GROUP_ID=${APP_GROUP_ID}
+      - TZ=${TZ}
+      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_USERNAME=${DB_USER}
+      - DATABASE_PASSWORD=${DB_PASSWORD}
+      - DISK_TYPE=${DISK_TYPE}
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
     ports:
       - "6060:6060"
     volumes:
-      - ${BOOKLORE_DATA_PATH}:/app/data
-      - ${BOOKLORE_BOOKS_PATH}:/books
+      - ./data:/app/data
+      - ./books:/books
+      - ./bookdrop:/bookdrop
+    healthcheck:
+      test: wget -q -O - http://localhost:6060/api/v1/healthcheck
+      interval: 60s
+      retries: 5
+      start_period: 60s
+      timeout: 10s
+    restart: unless-stopped
 
   mariadb:
     image: lscr.io/linuxserver/mariadb:11.4.5
     container_name: mariadb
-    env_file:
-      - .env
+    environment:
+      - PUID=${DB_USER_ID}
+      - PGID=${DB_GROUP_ID}
+      - TZ=${TZ}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
     volumes:
-      - ${MARIADB_CONFIG_PATH}:/config
+      - ./mariadb/config:/config
     restart: unless-stopped
-```
-Note: You can find the latest BookLore image tag `BOOKLORE_IMAGE_TAG` (e.g. v.0.x.x) from the Releases section:
-📦 [Latest Image Tag – GitHub Releases](https://github.com/adityachandelgit/BookLore/releases)
-
-
-### 4️⃣ Start the Containers
-
-Run the following command to start the services:
-
-```ini
-docker-compose up -d
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 ```
 
-### 5️⃣ Access BookLore
+### Step 3: Launch
 
-Once the containers are up, access BookLore in your browser at:
-
-```ini
-http://localhost:6060
+```bash
+docker compose up -d
 ```
 
-### 6️⃣ First-Time Login
+Open **http://localhost:6060**, create your admin account, and start building your library.
 
-After starting the containers, you can log into BookLore with the default admin credentials:
+---
 
-```ini
-Username: admin
-Password: admin123
+## ⚠️ Network Storage (NAS / NFS / SMB / CIFS)
+
+> [!CAUTION]
+> BookLore's file operations (metadata writing, file renaming, file organization) are built for **local file systems only**. Network-attached storage (NAS, NFS, SMB/CIFS mounts, cloud-backed FUSE, etc.) is **unsupported and untested**. Mount options, network latency, caching, and filesystem semantics are all outside BookLore's control and can cause silent file corruption, incomplete writes, missing files, and other unpredictable behavior. **Issues related to network storage will be closed without investigation.**
+
+If your book files live on network storage, set `DISK_TYPE=NETWORK` in your `.env` file. This puts BookLore into **network storage mode**, which disables all file write and reorganization features. Metadata is stored in the database only and your files are never modified. This is the only supported configuration for network storage.
+
+---
+
+## 🎮 Live Demo
+
+See BookLore in action before deploying your own instance.
+
+| | |
+|:---|:---|
+| 🌐 **URL** | **[demo.booklore.org](https://demo.booklore.org)** |
+| 👤 **Username** | `booklore` |
+| 🔑 **Password** | `9HC20PGGfitvWaZ1` |
+
+> [!NOTE]
+> This is a standard user account. Admin features like library creation, user management, and system settings are only available on your own instance.
+
+---
+
+## 📥 BookDrop: Zero-Effort Import
+
+Drop book files into a folder. BookLore picks them up, pulls metadata, and queues everything for your review.
+
+```mermaid
+graph LR
+    A[📁 Drop Files] --> B[🔍 Auto-Detect]
+    B --> C[📊 Extract Metadata]
+    C --> D[✅ Review & Import]
 ```
-> ⚠️ **Important:**  
-> You’ll be prompted to change the default password upon your first login to ensure better security.
 
-## Tech Stack
+| Step | What Happens |
+|:---|:---|
+| 1. **Watch** | BookLore monitors the BookDrop folder around the clock |
+| 2. **Detect** | New files are picked up and parsed automatically |
+| 3. **Enrich** | Metadata is fetched from Google Books and Open Library |
+| 4. **Import** | You review, tweak if needed, and add to your library |
 
-- **Backend:** Spring Boot (Java)
-- **Frontend:** Angular (TypeScript)
-- **Database:** MariaDB
-- **Containerization:** Docker & Docker Compose  
+Mount the volume in `docker-compose.yml`:
+
+```yaml
+volumes:
+  - ./bookdrop:/bookdrop
+```
+
+---
+
+## 🤝 Community & Support
+
+| | |
+|:---|:---|
+| 🐞 **Something not working?** | [Report a Bug](https://github.com/booklore-app/booklore/issues/new?template=bug_report.yml) |
+| 💡 **Got an idea?** | [Request a Feature](https://github.com/booklore-app/booklore/issues/new?template=feature_request.yml) |
+| 🛠️ **Want to help build?** | [Contributing Guide](CONTRIBUTING.md) |
+| 💬 **Come hang out** | [Discord Server](https://discord.gg/Ee5hd458Uz) |
+
+> [!WARNING]
+> **Before opening a PR:** Open an issue first and get maintainer approval. PRs without a linked issue, without screenshots/video proof, or without pasted test output will be closed. All code must follow project [backend](CONTRIBUTING.md#backend-conventions) and [frontend](CONTRIBUTING.md#frontend-conventions) conventions. AI-assisted contributions are welcome, but you must run, test, and understand every line you submit. See the [Contributing Guide](CONTRIBUTING.md) for full details.
+
+---
+
+## 💜 Support BookLore
+
+BookLore is free, open source, and built with care. Here's how you can give back:
+
+| Action | How |
+|:---|:---|
+| ⭐ **Star this repo** | It's the simplest way to help others find BookLore |
+| 💰 **Sponsor development** | [Open Collective](https://opencollective.com/booklore) funds hosting, testing, and new features |
+| 📢 **Tell someone** | Share BookLore with a friend, a subreddit, or your local book club |
+
+> [!IMPORTANT]
+> We're raising funds for a Kobo device to build and test native Kobo sync support.
+> [Contribute to the Kobo Bounty →](https://opencollective.com/booklore/projects/kobo-device-for-testing)
+
+---
+
+## 🌍 Translations
+
+BookLore is used by readers around the world. Help make it accessible in your language on [Weblate](https://hosted.weblate.org/engage/booklore/).
+
+<a href="https://hosted.weblate.org/engage/booklore/">
+  <img src="https://hosted.weblate.org/widget/booklore/multi-auto.svg?v=1" alt="Translation status" />
+</a>
+
+---
+
+## 📊 Project Analytics
+
+![Repository Activity](https://repobeats.axiom.co/api/embed/44a04220bfc5136e7064181feb07d5bf0e59e27e.svg)
+
+### ⭐ Star History
+
+<a href="https://www.star-history.com/#booklore-app/booklore&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&legend=top-left" width="600" />
+ </picture>
+</a>
+
+---
+
+## 👥 Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=adityachandelgit/BookLore)](https://github.com/booklore-app/booklore/graphs/contributors)
+
+Every contribution matters. [See how you can help →](CONTRIBUTING.md)
+
+---
+
+<div align="center">
+
+## 🌟 Sponsors & Partners
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+<a href="https://www.pikapods.com/pods?run=booklore">
+  <img src="https://www.pikapods.com/static/run-button.svg" alt="Run on PikaPods" height="40" />
+</a>
+
+**PikaPods**
+
+</td>
+<td align="center" width="33%">
+
+<a href="https://docs.elfhosted.com/app/booklore">
+  <img src="https://docs.elfhosted.com/images/logo.svg" alt="ElfHosted" height="40" />
+</a>
+
+**ElfHosted**
+
+</td>
+<td align="center" width="34%">
+
+<a href="https://jb.gg/OpenSource">
+  <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" alt="JetBrains" height="40" />
+</a>
+
+**JetBrains**
+
+</td>
+</tr>
+</table>
+
+*Want your logo here? [Become a sponsor →](https://opencollective.com/booklore)*
+
+</div>
+
+---
+
+## ⚠️ Note to Integrators
+
+While BookLore is open source and its API is accessible, it is not designed or maintained as a stable integration point. Endpoints are undocumented, unversioned, and may change or break at any time without notice. No compatibility guarantees or support are provided for third-party use.
+
+<div align="center">
+
+## ⚖️ License
+
+**GNU Affero General Public License v3.0**
+
+Copyright 2024–2026 BookLore
+
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0.html)
+
+</div>
