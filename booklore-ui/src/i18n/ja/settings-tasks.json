@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "実行",
-        "rerun": "再実行"
+        "rerun": "再実行",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "メタデータ置換モード：",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "選択した本のメタデータ更新が正常にスケジュールされました。",
         "metadataAlreadyRunningDetail": "メタデータ更新タスクは既に実行中です。完了するまでお待ちください。",
         "metadataFailed": "メタデータ更新に失敗しました",
-        "metadataFailedDetail": "メタデータ更新のスケジュール中に予期しないエラーが発生しました。しばらくしてからもう一度お試しいただくか、問題が続く場合はサポートにお問い合わせください。"
-    }
+        "metadataFailedDetail": "メタデータ更新のスケジュール中に予期しないエラーが発生しました。しばらくしてからもう一度お試しいただくか、問題が続く場合はサポートにお問い合わせください。",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

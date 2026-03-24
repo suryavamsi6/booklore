@@ -66,4 +66,11 @@ public class TaskController {
         service.rescheduleTask(taskType);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/{taskId}/retry")
+    @PreAuthorize("@securityUtil.canAccessTaskManager() or @securityUtil.isAdmin()")
+    public ResponseEntity<TaskCreateResponse> retryTask(@PathVariable String taskId) {
+        TaskCreateResponse response = service.retryTask(taskId);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+    }
 }

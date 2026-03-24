@@ -158,6 +158,9 @@ public class TaskHistoryService {
                 .createdAt(toUtcInstant(task.getCreatedAt()))
                 .updatedAt(toUtcInstant(task.getUpdatedAt()))
                 .completedAt(toUtcInstant(task.getCompletedAt()))
+                .retryEligible(task.isRetryEligible())
+                .retryCount(task.getRetryCount())
+                .failureReason(task.getFailureReason())
                 .build();
     }
 

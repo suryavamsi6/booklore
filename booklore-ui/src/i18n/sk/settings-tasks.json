@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "",
-        "rerun": ""
+        "rerun": "",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "",
         "metadataAlreadyRunningDetail": "",
         "metadataFailed": "",
-        "metadataFailedDetail": ""
-    }
+        "metadataFailedDetail": "",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

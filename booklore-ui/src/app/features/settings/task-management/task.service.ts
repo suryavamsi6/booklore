@@ -92,6 +92,9 @@ export interface TaskHistory {
   createdAt: string | null;
   updatedAt: string | null;
   completedAt: string | null;
+  retryEligible?: boolean;
+  retryCount?: number;
+  failureReason?: string;
 }
 
 export interface TaskCancelResponse {
@@ -137,6 +140,10 @@ export class TaskService {
 
   cancelTask(taskId: string): Observable<TaskCancelResponse> {
     return this.http.delete<TaskCancelResponse>(`${this.baseUrl}/${taskId}/cancel`);
+  }
+
+  retryTask(taskId: string): Observable<TaskCreateResponse> {
+    return this.http.post<TaskCreateResponse>(`${this.baseUrl}/${taskId}/retry`, {});
   }
 
   updateCronConfig(taskType: string, request: TaskCronConfigRequest): Observable<CronConfig> {

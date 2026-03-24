@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "Ausführen",
-        "rerun": "Erneut ausführen"
+        "rerun": "Erneut ausführen",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "Metadaten-Ersetzungsmodus:",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "Die Metadaten-Aktualisierung für die ausgewählten Bücher wurde erfolgreich geplant.",
         "metadataAlreadyRunningDetail": "Eine Metadaten-Aktualisierung wird bereits ausgeführt. Bitte warten Sie, bis sie abgeschlossen ist, bevor Sie eine weitere starten.",
         "metadataFailed": "Metadaten-Aktualisierung fehlgeschlagen",
-        "metadataFailedDetail": "Beim Planen der Metadaten-Aktualisierung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
-    }
+        "metadataFailedDetail": "Beim Planen der Metadaten-Aktualisierung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht.",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }
