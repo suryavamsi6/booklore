@@ -312,6 +312,13 @@ jobs:
             type=gha,mode=max
             type=registry,ref=ghcr.io/suryavamsi6/booklore:buildcache,mode=max
 
+      - name: Create and Push Git Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ env.new_tag }}
+          git push origin ${{ env.new_tag }}
+
       - name: Update GitHub Release Draft
         uses: release-drafter/release-drafter@6db134d15f3909ccc9eefd369f02bd1e9cffdf97 # v6
         with:
@@ -320,8 +327,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Publish GitHub Draft Release
+      - name: Publish GitHub Release
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          gh release edit ${{ env.new_tag }} --draft=true
+          gh release edit ${{ env.new_tag }} --draft=false
