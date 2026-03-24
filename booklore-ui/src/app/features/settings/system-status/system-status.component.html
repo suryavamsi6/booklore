@@ -1,0 +1,217 @@
+<ng-container *transloco="let t; prefix: 'settings.systemStatus'">
+  <div class="main-container">
+    <div class="settings-header">
+      <h2 class="settings-title">
+        <i class="pi pi-server"></i>
+        {{ t('title') }}
+      </h2>
+    </div>
+
+    <!-- Readiness Section -->
+    <div class="settings-card">
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="pi pi-heart-fill"></i>
+          {{ t('readiness') }}
+        </h3>
+      </div>
+      <div class="section-body">
+        @if (readinessLoading) {
+          <div class="loading-container">
+            <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4"></p-progressSpinner>
+            <span>{{ t('loading') }}</span>
+          </div>
+        } @else if (readinessError || !readiness) {
+          <p-message severity="error" [text]="t('loadError')"></p-message>
+        } @else {
+          <div class="readiness-content">
+            <div class="readiness-state-row">
+              <span class="info-label">{{ t('state.label') }}</span>
+              <p-tag
+                [severity]="getReadinessSeverity(readiness.state)"
+                [value]="t('state.' + readiness.state)">
+              </p-tag>
+            </div>
+            <div class="readiness-checks">
+              <div class="check-item" [class.check-ok]="readiness.setupComplete" [class.check-fail]="!readiness.setupComplete">
+                <i [class]="readiness.setupComplete ? 'pi pi-check' : 'pi pi-times'"></i>
+                <span>{{ t('checks.setupComplete') }}</span>
+              </div>
+              <div class="check-item" [class.check-ok]="readiness.adminProvisioned" [class.check-fail]="!readiness.adminProvisioned">
+                <i [class]="readiness.adminProvisioned ? 'pi pi-check' : 'pi pi-times'"></i>
+                <span>{{ t('checks.adminProvisioned') }}</span>
+              </div>
+              <div class="check-item" [class.check-ok]="readiness.databaseReachable" [class.check-fail]="!readiness.databaseReachable">
+                <i [class]="readiness.databaseReachable ? 'pi pi-check' : 'pi pi-times'"></i>
+                <span>{{ t('checks.databaseReachable') }}</span>
+              </div>
+              <div class="check-item" [class.check-ok]="readiness.backgroundProcessingHealthy" [class.check-fail]="!readiness.backgroundProcessingHealthy">
+                <i [class]="readiness.backgroundProcessingHealthy ? 'pi pi-check' : 'pi pi-times'"></i>
+                <span>{{ t('checks.backgroundProcessing') }}</span>
+              </div>
+              <div class="check-item" [class.check-ok]="readiness.librariesHealthy" [class.check-fail]="!readiness.librariesHealthy">
+                <i [class]="readiness.librariesHealthy ? 'pi pi-check' : 'pi pi-times'"></i>
+                <span>{{ t('checks.librariesHealthy') }}</span>
+              </div>
+            </div>
+
+            @if (readiness.activeWarnings.length > 0) {
+              <div class="warnings-section">
+                <h4 class="subsection-title">
+                  <i class="pi pi-exclamation-triangle"></i>
+                  {{ t('warnings') }}
+                </h4>
+                <ul class="warning-list">
+                  @for (warning of readiness.activeWarnings; track warning) {
+                    <li class="warning-item">{{ warning }}</li>
+                  }
+                </ul>
+              </div>
+            } @else {
+              <div class="no-warnings">
+                <i class="pi pi-check-circle"></i>
+                <span>{{ t('noWarnings') }}</span>
+              </div>
+            }
+
+            @if (readiness.recommendedActions.length > 0) {
+              <div class="actions-section">
+                <h4 class="subsection-title">
+                  <i class="pi pi-list-check"></i>
+                  {{ t('actions') }}
+                </h4>
+                <ul class="action-list">
+                  @for (action of readiness.recommendedActions; track action) {
+                    <li class="action-item">{{ action }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <div class="evaluated-at">
+              <i class="pi pi-clock"></i>
+              {{ formatDate(readiness.evaluatedAt) }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Health Checks Section -->
+    <div class="settings-card">
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="pi pi-chart-bar"></i>
+          {{ t('healthChecks') }}
+        </h3>
+      </div>
+      <div class="section-body">
+        @if (healthLoading) {
+          <div class="loading-container">
+            <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4"></p-progressSpinner>
+            <span>{{ t('loading') }}</span>
+          </div>
+        } @else if (healthError) {
+          <p-message severity="error" [text]="t('loadError')"></p-message>
+        } @else {
+          <div class="health-grid">
+            @for (check of healthChecks; track check.component) {
+              <div class="health-card" [class]="'health-' + check.status.toLowerCase()">
+                <div class="health-card-header">
+                  <i [class]="getHealthIcon(check.status)"></i>
+                  <span class="health-component-name">{{ t('component.' + check.component) }}</span>
+                  <p-tag
+                    [severity]="getHealthSeverity(check.status)"
+                    [value]="t('health.' + check.status)"
+                    styleClass="health-tag">
+                  </p-tag>
+                </div>
+                <p class="health-summary">{{ check.summary }}</p>
+                @if (check.details) {
+                  <p class="health-details">{{ check.details }}</p>
+                }
+                @if (check.nextAction) {
+                  <p class="health-next-action">
+                    <i class="pi pi-arrow-right"></i>
+                    {{ check.nextAction }}
+                  </p>
+                }
+                <span class="health-updated-at">{{ formatDate(check.updatedAt) }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Backup Validation Section -->
+    <div class="settings-card">
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="pi pi-shield"></i>
+          {{ t('backupValidation') }}
+        </h3>
+      </div>
+      <div class="section-body">
+        @if (backupLoading) {
+          <div class="loading-container">
+            <p-progressSpinner styleClass="w-2rem h-2rem" strokeWidth="4"></p-progressSpinner>
+            <span>{{ t('loading') }}</span>
+          </div>
+        } @else if (backupError || !backupValidation) {
+          <p-message severity="error" [text]="t('loadError')"></p-message>
+        } @else {
+          <div class="backup-content">
+            <div class="backup-status-row">
+              <i [class]="getBackupIcon(backupValidation.status)" class="backup-icon"></i>
+              <p-tag
+                [severity]="getBackupSeverity(backupValidation.status)"
+                [value]="t('backup.' + backupValidation.status)">
+              </p-tag>
+            </div>
+
+            @if (backupValidation.lastBackupDetectedAt) {
+              <div class="backup-detail-row">
+                <span class="info-label">{{ t('backup.lastDetected') }}:</span>
+                <span>{{ formatDate(backupValidation.lastBackupDetectedAt) }}</span>
+              </div>
+            }
+
+            @if (backupValidation.includedComponents.length > 0) {
+              <div class="backup-components">
+                <span class="info-label">{{ t('backup.included') }}:</span>
+                <div class="component-tags">
+                  @for (comp of backupValidation.includedComponents; track comp) {
+                    <p-tag severity="success" [value]="comp" styleClass="component-tag"></p-tag>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (backupValidation.missingComponents.length > 0) {
+              <div class="backup-components">
+                <span class="info-label">{{ t('backup.missing') }}:</span>
+                <div class="component-tags">
+                  @for (comp of backupValidation.missingComponents; track comp) {
+                    <p-tag severity="danger" [value]="comp" styleClass="component-tag"></p-tag>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="backup-guidance">
+              <i class="pi pi-info-circle"></i>
+              <span>{{ t('backup.guidance') }}: {{ backupValidation.guidance }}</span>
+            </div>
+
+            <div class="evaluated-at">
+              <i class="pi pi-clock"></i>
+              {{ formatDate(backupValidation.evaluatedAt) }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</ng-container>
