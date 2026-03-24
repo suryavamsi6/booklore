@@ -61,29 +61,7 @@
     }
   }
 
-  &.collective-card {
-    border-color: rgba(99, 102, 241, 0.3);
 
-    &:hover {
-      border-color: rgb(99, 102, 241);
-    }
-
-    .card-icon {
-      color: rgb(99, 102, 241);
-    }
-  }
-
-  &.kofi-card {
-    border-color: rgba(251, 146, 60, 0.3);
-
-    &:hover {
-      border-color: rgb(251, 146, 60);
-    }
-
-    .card-icon {
-      color: rgb(251, 146, 60);
-    }
-  }
 }
 
 .card-icon {
