@@ -54,4 +54,18 @@ public class TaskHistoryEntity {
     @Convert(converter = JpaJsonConverter.class)
     @Column(name = "task_options", columnDefinition = "TEXT")
     private Map<String, Object> taskOptions;
+
+    @Column(name = "retry_eligible")
+    @Builder.Default
+    private boolean retryEligible = false;
+
+    @Column(name = "retry_count")
+    @Builder.Default
+    private int retryCount = 0;
+
+    @Column(name = "last_attempt_at")
+    private LocalDateTime lastAttemptAt;
+
+    @Column(name = "failure_reason", length = 1024)
+    private String failureReason;
 }

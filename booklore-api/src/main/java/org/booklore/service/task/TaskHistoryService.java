@@ -177,4 +177,23 @@ public class TaskHistoryService {
                 .completedAt(null)
                 .build();
     }
+
+    @Transactional
+    public void markRetryEligible(String taskId, String failureReason) {
+        taskHistoryRepository.findById(taskId).ifPresent(task -> {
+            task.setRetryEligible(true);
+            task.setFailureReason(failureReason);
+            taskHistoryRepository.save(task);
+        });
+    }
+
+    @Transactional
+    public void incrementRetryCount(String taskId) {
+        taskHistoryRepository.findById(taskId).ifPresent(task -> {
+            task.setRetryCount(task.getRetryCount() + 1);
+            task.setLastAttemptAt(LocalDateTime.now());
+            task.setRetryEligible(false);
+            taskHistoryRepository.save(task);
+        });
+    }
 }
