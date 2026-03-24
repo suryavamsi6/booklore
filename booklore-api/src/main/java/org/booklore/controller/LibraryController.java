@@ -3,7 +3,9 @@ package org.booklore.controller;
 import org.booklore.config.security.annotation.CheckLibraryAccess;
 import org.booklore.model.dto.Book;
 import org.booklore.model.dto.Library;
+import org.booklore.model.dto.PagedResponse;
 import org.booklore.model.dto.request.CreateLibraryRequest;
+import org.booklore.service.book.BookService;
 import org.booklore.service.library.LibraryHealthService;
 import org.booklore.service.library.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +13,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,11 +27,13 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/libraries")
 @AllArgsConstructor
+@Validated
 @Tag(name = "Libraries", description = "Endpoints for managing libraries and their books")
 public class LibraryController {
 
     private final LibraryService libraryService;
     private final LibraryHealthService libraryHealthService;
+    private final BookService bookService;
 
     @Operation(summary = "Get all libraries", description = "Retrieve a list of all libraries.")
     @ApiResponse(responseCode = "200", description = "Libraries returned successfully")
@@ -100,6 +106,18 @@ public class LibraryController {
     public ResponseEntity<List<Book>> getBooks(@Parameter(description = "ID of the library") @PathVariable long libraryId) {
         List<Book> books = libraryService.getBooks(libraryId);
         return ResponseEntity.ok(books);
+    }
+
+    @Operation(summary = "Get books from a library (paged)", description = "Retrieve a paginated list of books from a specific library.")
+    @ApiResponse(responseCode = "200", description = "Paginated books returned successfully")
+    @GetMapping("/{libraryId}/books/paged")
+    @CheckLibraryAccess(libraryIdParam = "libraryId")
+    public ResponseEntity<PagedResponse<Book>> getBooksPaged(
+            @Parameter(description = "ID of the library") @PathVariable long libraryId,
+            @Parameter(description = "Zero-based page index") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size (1–200)") @RequestParam(defaultValue = "50") @Min(1) @Max(200) int size,
+            @Parameter(description = "Include book descriptions in the response") @RequestParam(required = false, defaultValue = "false") boolean withDescription) {
+        return ResponseEntity.ok(bookService.getPagedBookDTOs(page, size, libraryId, withDescription));
     }
 
     @Operation(summary = "Rescan a library", description = "Rescan a library to refresh its contents. Requires admin or manipulation permission.")

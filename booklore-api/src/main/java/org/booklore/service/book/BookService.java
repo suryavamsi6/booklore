@@ -108,6 +108,39 @@ public class BookService {
                 .collect(Collectors.toSet());
     }
 
+    public PagedResponse<Book> getPagedBookDTOs(int page, int size, Long libraryId, boolean includeDescription) {
+        BookLoreUser user = authenticationService.getAuthenticatedUser();
+        boolean isAdmin = user.getPermissions().isAdmin();
+
+        PagedResponse<Book> pagedResponse;
+        if (libraryId != null) {
+            pagedResponse = bookQueryService.getPagedBooksByLibraryId(page, size, libraryId, includeDescription, user.getId());
+        } else if (isAdmin) {
+            pagedResponse = bookQueryService.getPagedBooks(page, size, null, includeDescription, null);
+        } else {
+            pagedResponse = bookQueryService.getPagedBooks(page, size, getUserLibraryIds(user), includeDescription, user.getId());
+        }
+
+        List<Book> books = pagedResponse.getContent();
+        Set<Long> bookIds = books.stream().map(Book::getId).collect(Collectors.toSet());
+        Map<Long, UserBookProgressEntity> progressMap =
+                readingProgressService.fetchUserProgress(user.getId(), bookIds);
+        Map<Long, UserBookFileProgressEntity> fileProgressMap =
+                readingProgressService.fetchUserFileProgress(user.getId(), bookIds);
+
+        books.forEach(book -> {
+            readingProgressService.enrichBookWithProgress(
+                    book,
+                    progressMap.get(book.getId()),
+                    fileProgressMap.get(book.getId())
+            );
+            Set<Shelf> filtered = filterShelvesByUserId(book.getShelves(), user.getId());
+            book.setShelves(!includeDescription && filtered != null && filtered.isEmpty() ? null : filtered);
+        });
+
+        return pagedResponse;
+    }
+
     public List<Book> getBooksByIds(Set<Long> bookIds, boolean withDescription) {
         BookLoreUser user = authenticationService.getAuthenticatedUser();
         boolean isAdmin = user.getPermissions().isAdmin();

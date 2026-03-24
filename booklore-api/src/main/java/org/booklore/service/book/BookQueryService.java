@@ -4,12 +4,17 @@ import org.booklore.mapper.v2.BookMapperV2;
 import org.booklore.model.dto.Book;
 import org.booklore.model.dto.BookMetadata;
 import org.booklore.model.dto.ComicMetadata;
+import org.booklore.model.dto.PagedResponse;
 import org.booklore.model.entity.BookEntity;
 import org.booklore.repository.BookRepository;
 import org.booklore.service.restriction.ContentRestrictionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,10 +32,50 @@ public class BookQueryService {
         return mapBooksToDto(books, includeDescription, null, !includeDescription);
     }
 
+    @Transactional(readOnly = true)
     public List<Book> getAllBooksByLibraryIds(Set<Long> libraryIds, boolean includeDescription, Long userId) {
         List<BookEntity> books = bookRepository.findAllWithMetadataByLibraryIds(libraryIds);
         books = contentRestrictionService.applyRestrictions(books, userId);
         return mapBooksToDto(books, includeDescription, userId, !includeDescription);
+    }
+
+    @Transactional(readOnly = true)
+    public PagedResponse<Book> getPagedBooks(int page, int size, Collection<Long> libraryIds, boolean includeDescription, Long userId) {
+        var pageable = PageRequest.of(page, size);
+        Page<BookEntity> bookPage;
+        if (libraryIds != null) {
+            bookPage = bookRepository.findPagedWithMetadataByLibraryIds(libraryIds, pageable);
+        } else {
+            bookPage = bookRepository.findPagedWithMetadata(pageable);
+        }
+        List<BookEntity> restricted = contentRestrictionService.applyRestrictions(bookPage.getContent(), userId);
+        List<Book> content = mapBooksToDto(restricted, includeDescription, userId, !includeDescription);
+        return PagedResponse.<Book>builder()
+                .content(content)
+                .page(bookPage.getNumber())
+                .size(bookPage.getSize())
+                .totalElements(bookPage.getTotalElements())
+                .totalPages(bookPage.getTotalPages())
+                .first(bookPage.isFirst())
+                .last(bookPage.isLast())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public PagedResponse<Book> getPagedBooksByLibraryId(int page, int size, Long libraryId, boolean includeDescription, Long userId) {
+        var pageable = PageRequest.of(page, size);
+        Page<BookEntity> bookPage = bookRepository.findPagedWithMetadataByLibraryId(libraryId, pageable);
+        List<BookEntity> restricted = contentRestrictionService.applyRestrictions(bookPage.getContent(), userId);
+        List<Book> content = mapBooksToDto(restricted, includeDescription, userId, !includeDescription);
+        return PagedResponse.<Book>builder()
+                .content(content)
+                .page(bookPage.getNumber())
+                .size(bookPage.getSize())
+                .totalElements(bookPage.getTotalElements())
+                .totalPages(bookPage.getTotalPages())
+                .first(bookPage.isFirst())
+                .last(bookPage.isLast())
+                .build();
     }
 
     public List<BookEntity> findAllWithMetadataByIds(Set<Long> bookIds) {
