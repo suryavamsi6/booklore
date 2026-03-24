@@ -4,7 +4,7 @@ import {ConfirmationService, MenuItem, MessageService} from 'primeng/api';
 import {PageTitleService} from '../../../../shared/service/page-title.service';
 import {BookService} from '../../service/book.service';
 import {BookMetadataManageService} from '../../service/book-metadata-manage.service';
-import {debounceTime, filter, map, switchMap, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, map, shareReplay, switchMap, takeUntil} from 'rxjs/operators';
 import {BehaviorSubject, combineLatest, finalize, Observable, of, Subject, Subscription} from 'rxjs';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {Library} from '../../model/library.model';
@@ -160,6 +160,10 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly MOBILE_PADDING = 48;
   private readonly MOBILE_TITLE_BAR_HEIGHT = 32;
   private readonly MOBILE_COLUMNS_STORAGE_KEY = 'mobileColumnsPreference';
+  private readonly loadedUserState$ = this.userService.userState$.pipe(
+    filter(u => !!u?.user && u.loaded),
+    shareReplay({bufferSize: 1, refCount: true})
+  );
 
   private settingFiltersFromUrl = false;
   private destroy$ = new Subject<void>();
@@ -296,7 +300,10 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.pageTitle.setPageTitle('');
-    this.coverScalePreferenceService.scaleChange$.pipe(debounceTime(1000)).subscribe();
+    this.coverScalePreferenceService.scaleChange$.pipe(
+      debounceTime(1000),
+      takeUntil(this.destroy$)
+    ).subscribe();
     this.loadMobileColumnsPreference();
 
     this.initializeEntityRouting();
@@ -364,7 +371,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
       this.entity$ = routeEntityInfo$.pipe(
         switchMap(({entityId, entityType}) => this.entityService.fetchEntity(entityId, entityType))
       );
-      this.entity$.subscribe(entity => this.handleEntityLoaded(entity));
+      this.entity$.pipe(takeUntil(this.destroy$)).subscribe(entity => this.handleEntityLoaded(entity));
     }
   }
 
@@ -384,16 +391,19 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setupRouteChangeHandlers(): void {
-    this.activatedRoute.paramMap.subscribe(() => {
-      this.searchTerm$.next('');
-      this.bookTitle = '';
-      this.bookSelectionService.deselectAll();
-      this.clearFilter();
-    });
+    this.activatedRoute.paramMap
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.searchTerm$.next('');
+        this.bookTitle = '';
+        this.bookSelectionService.deselectAll();
+        this.clearFilter();
+      });
   }
 
   private setupUserStateSubscription(): void {
-    this.userService.userState$.pipe(filter(u => !!u?.user && u.loaded))
+    this.loadedUserState$
+      .pipe(takeUntil(this.destroy$))
       .subscribe(userState => {
         this.metadataMenuItems = this.bookMenuService.getMetadataMenuItems(
           () => this.autoFetchMetadata(),
@@ -413,8 +423,9 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
     combineLatest([
       this.entityRouteInfo$,
       this.activatedRoute.queryParamMap,
-      this.userService.userState$.pipe(filter(u => !!u?.user && u.loaded))
-    ]).subscribe(([entityInfo, queryParamMap, user]) => {
+      this.loadedUserState$,
+      this.sidebarFilterTogglePrefService.showFilter$
+    ]).pipe(takeUntil(this.destroy$)).subscribe(([entityInfo, queryParamMap, user, showFilter]) => {
       const parseResult = this.queryParamsService.parseQueryParams(
         queryParamMap,
         user.user?.userSettings?.entityViewPreferences,
@@ -432,9 +443,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
 
-      this.sidebarFilterTogglePrefService.showFilter$.subscribe(value => {
-        this.showFilter = value;
-      });
+      this.showFilter = showFilter;
 
 
       this.currentFilterLabel = this.t.translate('book.browser.labels.allBooks');
@@ -493,9 +502,11 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private setupSearchTermSubscription(): void {
-    this.searchTerm$.subscribe(term => {
-      this.hasSearchTerm = !!term && term.trim().length > 0;
-    });
+    this.searchTerm$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(term => {
+        this.hasSearchTerm = !!term && term.trim().length > 0;
+      });
   }
 
   private setupSelectionSubscription(): void {

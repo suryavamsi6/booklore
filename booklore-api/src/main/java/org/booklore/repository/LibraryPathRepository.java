@@ -10,8 +10,16 @@ import java.util.Optional;
 
 @Repository
 public interface LibraryPathRepository extends JpaRepository<LibraryPathEntity, Long> {
+    interface LibraryHealthPathProjection {
+        Long getLibraryId();
+        String getPath();
+    }
+
     Optional<LibraryPathEntity> findByLibraryIdAndPath(Long libraryId, String path);
 
-    @Query("SELECT lp FROM LibraryPathEntity lp JOIN FETCH lp.library")
-    List<LibraryPathEntity> findAllWithLibrary();
+    @Query("""
+            SELECT lp.library.id AS libraryId, lp.path AS path
+            FROM LibraryPathEntity lp
+            """)
+    List<LibraryHealthPathProjection> findAllForHealthCheck();
 }

@@ -3,7 +3,6 @@ package org.booklore.service.library;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.booklore.model.entity.LibraryPathEntity;
 import org.booklore.model.websocket.LibraryHealthPayload;
 import org.booklore.model.websocket.Topic;
 import org.booklore.repository.LibraryPathRepository;
@@ -48,14 +47,14 @@ public class LibraryHealthService {
     }
 
     private Map<Long, Boolean> checkHealth() {
-        return libraryPathRepository.findAllWithLibrary().stream()
+        return libraryPathRepository.findAllForHealthCheck().stream()
                 .collect(Collectors.groupingBy(
-                        lp -> lp.getLibrary().getId(),
+                        LibraryPathRepository.LibraryHealthPathProjection::getLibraryId,
                         Collectors.reducing(true, this::isPathAccessible, Boolean::logicalAnd)
                 ));
     }
 
-    private boolean isPathAccessible(LibraryPathEntity libraryPath) {
+    private boolean isPathAccessible(LibraryPathRepository.LibraryHealthPathProjection libraryPath) {
         var path = Path.of(libraryPath.getPath());
         return Files.exists(path) && Files.isReadable(path);
     }

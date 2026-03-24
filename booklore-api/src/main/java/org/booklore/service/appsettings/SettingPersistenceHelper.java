@@ -32,6 +32,17 @@ public class SettingPersistenceHelper {
         return defaultValue;
     }
 
+    public String getOrCreateSetting(Map<String, String> settingsMap, AppSettingKey key, String defaultValue) {
+        String settingValue = settingsMap.get(key.toString());
+        if (settingValue != null) {
+            return settingValue;
+        }
+
+        saveDefaultSetting(key, defaultValue);
+        settingsMap.put(key.toString(), defaultValue);
+        return defaultValue;
+    }
+
     public void saveDefaultSetting(AppSettingKey key, String value) {
         AppSettingEntity setting = new AppSettingEntity();
         setting.setName(key.toString());

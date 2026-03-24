@@ -180,18 +180,25 @@ public class CbxReaderService {
     }
 
     private void evictOldestCacheEntries() {
-        if (archiveCache.size() <= MAX_CACHE_ENTRIES) {
-            return;
+        while (archiveCache.size() > MAX_CACHE_ENTRIES) {
+            String oldestKey = null;
+            long oldestAccessed = Long.MAX_VALUE;
+
+            for (Map.Entry<String, CachedArchiveMetadata> entry : archiveCache.entrySet()) {
+                if (entry.getValue().lastAccessed < oldestAccessed) {
+                    oldestAccessed = entry.getValue().lastAccessed;
+                    oldestKey = entry.getKey();
+                }
+            }
+
+            if (oldestKey == null) {
+                return;
+            }
+
+            if (archiveCache.remove(oldestKey) != null) {
+                log.debug("Evicted cache entry: {}", oldestKey);
+            }
         }
-        List<String> keysToRemove = archiveCache.entrySet().stream()
-                .sorted(Comparator.comparingLong(e -> e.getValue().lastAccessed))
-                .limit(archiveCache.size() - MAX_CACHE_ENTRIES)
-                .map(Map.Entry::getKey)
-                .toList();
-        keysToRemove.forEach(key -> {
-            archiveCache.remove(key);
-            log.debug("Evicted cache entry: {}", key);
-        });
     }
 
     private CachedArchiveMetadata scanArchiveMetadata(Path cbxPath) throws IOException {
