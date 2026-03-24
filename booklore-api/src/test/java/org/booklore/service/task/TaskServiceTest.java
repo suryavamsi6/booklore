@@ -8,6 +8,7 @@ import org.booklore.model.dto.request.TaskCreateRequest;
 import org.booklore.model.dto.response.CronConfig;
 import org.booklore.model.dto.response.TaskCreateResponse;
 import org.booklore.model.enums.TaskType;
+import org.booklore.repository.TaskHistoryRepository;
 import org.booklore.task.TaskCancellationManager;
 import org.booklore.task.TaskStatus;
 import org.booklore.task.tasks.Task;
@@ -29,6 +30,7 @@ class TaskServiceTest {
 
     private AuthenticationService authenticationService;
     private TaskHistoryService taskHistoryService;
+    private TaskHistoryRepository taskHistoryRepository;
     private TaskCronService taskCronService;
     private TaskCancellationManager cancellationManager;
     private Executor taskExecutor;
@@ -41,6 +43,7 @@ class TaskServiceTest {
     void setUp() {
         authenticationService = mock(AuthenticationService.class);
         taskHistoryService = mock(TaskHistoryService.class);
+        taskHistoryRepository = mock(TaskHistoryRepository.class);
         taskCronService = mock(TaskCronService.class);
         cancellationManager = mock(TaskCancellationManager.class);
         taskExecutor = mock(Executor.class);
@@ -53,6 +56,7 @@ class TaskServiceTest {
         taskService = new TaskService(
                 authenticationService,
                 taskHistoryService,
+                taskHistoryRepository,
                 taskCronService,
                 List.of(mockTask),
                 cancellationManager,
@@ -140,6 +144,7 @@ class TaskServiceTest {
         taskService = new TaskService(
                 authenticationService,
                 taskHistoryService,
+                taskHistoryRepository,
                 taskCronService,
                 List.of(nonParallelTask),
                 cancellationManager,
@@ -181,6 +186,7 @@ class TaskServiceTest {
         taskService = new TaskService(
                 authenticationService,
                 taskHistoryService,
+                taskHistoryRepository,
                 taskCronService,
                 List.of(asyncTask),
                 cancellationManager,
