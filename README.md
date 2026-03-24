@@ -14,12 +14,10 @@ Organize, read, annotate, sync across devices, and share, all without relying on
 </p>
 
 <p align="center">
-  <a href="https://github.com/booklore-app/booklore/releases"><img src="https://img.shields.io/github/v/release/adityachandelgit/BookLore?color=818CF8&style=flat-square&logo=github" alt="Release" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/adityachandelgit/BookLore?color=fab005&style=flat-square" alt="License" /></a>
-  <a href="https://hub.docker.com/r/booklore/booklore"><img src="https://img.shields.io/docker/pulls/booklore/booklore?color=2496ED&style=flat-square&logo=docker&logoColor=white" alt="Docker Pulls" /></a>
-  <a href="https://github.com/booklore-app/booklore/stargazers"><img src="https://img.shields.io/github/stars/adityachandelgit/BookLore?style=flat-square&color=ffd43b" alt="Stars" /></a>
+  <a href="https://github.com/suryavamsi6/booklore/releases"><img src="https://img.shields.io/github/v/release/suryavamsi6/booklore?color=818CF8&style=flat-square&logo=github" alt="Release" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/suryavamsi6/booklore?color=fab005&style=flat-square" alt="License" /></a>
+  <a href="https://github.com/suryavamsi6/booklore/stargazers"><img src="https://img.shields.io/github/stars/suryavamsi6/booklore?style=flat-square&color=ffd43b" alt="Stars" /></a>
   <a href="https://discord.gg/Ee5hd458Uz"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Discord" /></a>
-  <a href="https://opencollective.com/booklore"><img src="https://img.shields.io/opencollective/all/booklore?style=flat-square&color=7FADF2&logo=opencollective" alt="Open Collective" /></a>
   <a href="https://hosted.weblate.org/engage/booklore/"><img src="https://img.shields.io/weblate/progress/booklore?style=flat-square&logo=weblate&logoColor=white&color=2ECCAA" alt="Translate" /></a>
 </p>
 
@@ -63,10 +61,7 @@ All you need is [Docker](https://docs.docker.com/get-docker/) and [Docker Compos
 
 | Registry | Image |
 |----------|-------|
-| Docker Hub | `booklore/booklore` |
-| GitHub Container Registry | `ghcr.io/booklore-app/booklore` |
-
-> Legacy images at `ghcr.io/adityachandelgit/booklore-app` remain available but won't receive updates.
+| GitHub Container Registry | `ghcr.io/suryavamsi6/booklore` |
 
 </details>
 
@@ -102,8 +97,7 @@ Create a `docker-compose.yml`:
 ```yaml
 services:
   booklore:
-    image: booklore/booklore:latest
-    # Alternative: ghcr.io/booklore-app/booklore:latest
+    image: ghcr.io/suryavamsi6/booklore:latest
     container_name: booklore
     environment:
       - USER_ID=${APP_USER_ID}
@@ -216,8 +210,8 @@ volumes:
 
 | | |
 |:---|:---|
-| 🐞 **Something not working?** | [Report a Bug](https://github.com/booklore-app/booklore/issues/new?template=bug_report.yml) |
-| 💡 **Got an idea?** | [Request a Feature](https://github.com/booklore-app/booklore/issues/new?template=feature_request.yml) |
+| 🐞 **Something not working?** | [Report a Bug](https://github.com/suryavamsi6/booklore/issues/new?template=bug_report.yml) |
+| 💡 **Got an idea?** | [Request a Feature](https://github.com/suryavamsi6/booklore/issues/new?template=feature_request.yml) |
 | 🛠️ **Want to help build?** | [Contributing Guide](CONTRIBUTING.md) |
 | 💬 **Come hang out** | [Discord Server](https://discord.gg/Ee5hd458Uz) |
 
@@ -233,12 +227,7 @@ BookLore is free, open source, and built with care. Here's how you can give back
 | Action | How |
 |:---|:---|
 | ⭐ **Star this repo** | It's the simplest way to help others find BookLore |
-| 💰 **Sponsor development** | [Open Collective](https://opencollective.com/booklore) funds hosting, testing, and new features |
-| 📢 **Tell someone** | Share BookLore with a friend, a subreddit, or your local book club |
-
-> [!IMPORTANT]
-> We're raising funds for a Kobo device to build and test native Kobo sync support.
-> [Contribute to the Kobo Bounty →](https://opencollective.com/booklore/projects/kobo-device-for-testing)
+| � **Tell someone** | Share BookLore with a friend, a subreddit, or your local book club |
 
 ---
 
@@ -258,11 +247,11 @@ BookLore is used by readers around the world. Help make it accessible in your la
 
 ### ⭐ Star History
 
-<a href="https://www.star-history.com/#booklore-app/booklore&type=date&legend=top-left">
+<a href="https://www.star-history.com/#suryavamsi6/booklore&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=booklore-app/booklore&type=date&legend=top-left" width="600" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=suryavamsi6/booklore&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=suryavamsi6/booklore&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=suryavamsi6/booklore&type=date&legend=top-left" width="600" />
  </picture>
 </a>
 
@@ -270,7 +259,7 @@ BookLore is used by readers around the world. Help make it accessible in your la
 
 ## 👥 Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=adityachandelgit/BookLore)](https://github.com/booklore-app/booklore/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=suryavamsi6/booklore)](https://github.com/suryavamsi6/booklore/graphs/contributors)
 
 Every contribution matters. [See how you can help →](CONTRIBUTING.md)
 
@@ -312,7 +301,7 @@ Every contribution matters. [See how you can help →](CONTRIBUTING.md)
 </tr>
 </table>
 
-*Want your logo here? [Become a sponsor →](https://opencollective.com/booklore)*
+
 
 </div>
 
