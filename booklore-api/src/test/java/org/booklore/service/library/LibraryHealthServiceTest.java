@@ -1,7 +1,5 @@
 package org.booklore.service.library;
 
-import org.booklore.model.entity.LibraryEntity;
-import org.booklore.model.entity.LibraryPathEntity;
 import org.booklore.model.websocket.LibraryHealthPayload;
 import org.booklore.model.websocket.Topic;
 import org.booklore.repository.LibraryPathRepository;
@@ -38,7 +36,7 @@ class LibraryHealthServiceTest {
 
     @BeforeEach
     void setUp() {
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of());
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of());
         libraryHealthService = new LibraryHealthService(libraryPathRepository, messagingTemplate);
         libraryHealthService.init();
     }
@@ -48,7 +46,7 @@ class LibraryHealthServiceTest {
         Path validPath = tempDir.resolve("books");
         validPath.toFile().mkdirs();
 
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of(
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of(
                 createLibraryPath(1L, validPath.toString())
         ));
 
@@ -60,7 +58,7 @@ class LibraryHealthServiceTest {
 
     @Test
     void shouldReportUnhealthyWhenPathDoesNotExist() {
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of(
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of(
                 createLibraryPath(1L, "/nonexistent/path/that/does/not/exist")
         ));
 
@@ -75,7 +73,7 @@ class LibraryHealthServiceTest {
         Path validPath = tempDir.resolve("books");
         validPath.toFile().mkdirs();
 
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of(
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of(
                 createLibraryPath(1L, validPath.toString()),
                 createLibraryPath(1L, "/nonexistent/path")
         ));
@@ -91,7 +89,7 @@ class LibraryHealthServiceTest {
         Path validPath = tempDir.resolve("lib1");
         validPath.toFile().mkdirs();
 
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of(
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of(
                 createLibraryPath(1L, validPath.toString()),
                 createLibraryPath(2L, "/nonexistent/path")
         ));
@@ -108,7 +106,7 @@ class LibraryHealthServiceTest {
         Path validPath = tempDir.resolve("books");
         validPath.toFile().mkdirs();
 
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of(
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of(
                 createLibraryPath(1L, validPath.toString())
         ));
 
@@ -125,7 +123,7 @@ class LibraryHealthServiceTest {
         Path validPath = tempDir.resolve("books");
         Files.createDirectories(validPath);
 
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of(
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of(
                 createLibraryPath(1L, validPath.toString())
         ));
 
@@ -143,19 +141,23 @@ class LibraryHealthServiceTest {
 
     @Test
     void shouldReturnEmptyMapWhenNoLibraries() {
-        when(libraryPathRepository.findAllWithLibrary()).thenReturn(List.of());
+        when(libraryPathRepository.findAllForHealthCheck()).thenReturn(List.of());
         libraryHealthService.checkAndBroadcast();
 
         assertThat(libraryHealthService.getCurrentHealth()).isEmpty();
     }
 
-    private LibraryPathEntity createLibraryPath(Long libraryId, String path) {
-        var library = new LibraryEntity();
-        library.setId(libraryId);
+    private LibraryPathRepository.LibraryHealthPathProjection createLibraryPath(Long libraryId, String path) {
+        return new LibraryPathRepository.LibraryHealthPathProjection() {
+            @Override
+            public Long getLibraryId() {
+                return libraryId;
+            }
 
-        var libraryPath = new LibraryPathEntity();
-        libraryPath.setLibrary(library);
-        libraryPath.setPath(path);
-        return libraryPath;
+            @Override
+            public String getPath() {
+                return path;
+            }
+        };
     }
 }

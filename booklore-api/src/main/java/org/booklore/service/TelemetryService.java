@@ -7,7 +7,6 @@ import org.booklore.model.dto.settings.AppSettings;
 import org.booklore.model.dto.settings.MetadataProviderSettings;
 import org.booklore.model.dto.settings.MetadataPublicReviewsSettings;
 import org.booklore.model.dto.settings.UserSettingKey;
-import org.booklore.model.entity.LibraryEntity;
 import org.booklore.model.enums.BookFileType;
 import org.booklore.model.enums.MetadataProvider;
 import org.booklore.model.enums.ProvisioningMethod;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -63,17 +61,19 @@ public class TelemetryService {
         long totalUsers = userRepository.count();
         long localUsers = userRepository.countByProvisioningMethod(ProvisioningMethod.LOCAL);
         long oidcUsers = userRepository.countByProvisioningMethod(ProvisioningMethod.OIDC);
+        long totalBooks = bookRepository.count();
 
         AppSettings settings = appSettingService.getAppSettings();
 
         BookloreTelemetry.BookStatistics bookStatistics = BookloreTelemetry.BookStatistics.builder()
-                .totalBooks(bookRepository.count())
+                .totalBooks(totalBooks)
                 .bookCountByType(getBookFileTypeCounts())
                 .build();
 
-        List<BookloreTelemetry.LibraryStatistics> libraryStatisticsList = libraryRepository.findAll().stream()
+        List<BookloreTelemetry.LibraryStatistics> libraryStatisticsList = libraryRepository.findTelemetryLibraryStatistics().stream()
                 .map(this::mapLibraryStatistics)
-                .collect(Collectors.toList());
+                .toList();
+        int totalLibraries = libraryStatisticsList.size();
 
         String[] enabledMetadataProviders = getEnabledMetadataProviders(settings.getMetadataProviderSettings());
         String[] enabledReviewMetadataProviders = getEnabledReviewMetadataProviders(settings.getMetadataPublicReviewsSettings());
@@ -85,8 +85,8 @@ public class TelemetryService {
                 .installationId(installation.getId())
                 .installationDate(installation.getDate() != null ? installation.getDate().toString() : null)
                 .appVersion(versionService.appVersion)
-                .totalLibraries((int) libraryRepository.count())
-                .totalBooks(bookRepository.count())
+                .totalLibraries(totalLibraries)
+                .totalBooks(totalBooks)
                 .totalAdditionalBookFiles(bookAdditionalFileRepository.count())
                 .totalAuthors(authorRepository.count())
                 .totalBookmarks(bookMarkRepository.count())
@@ -140,11 +140,11 @@ public class TelemetryService {
         return countByType;
     }
 
-    private BookloreTelemetry.LibraryStatistics mapLibraryStatistics(LibraryEntity lib) {
+    private BookloreTelemetry.LibraryStatistics mapLibraryStatistics(LibraryRepository.TelemetryLibraryStatisticsProjection lib) {
         return BookloreTelemetry.LibraryStatistics.builder()
-                .totalLibraryPaths(lib.getLibraryPaths() != null ? lib.getLibraryPaths().size() : 0)
-                .bookCount(bookRepository.countByLibraryId(lib.getId()))
-                .watchEnabled(lib.isWatch())
+                .totalLibraryPaths(lib.getTotalLibraryPaths() != null ? lib.getTotalLibraryPaths().intValue() : 0)
+                .bookCount(lib.getBookCount() != null ? lib.getBookCount() : 0L)
+                .watchEnabled(lib.getWatchEnabled())
                 .iconType(lib.getIconType() != null ? lib.getIconType().name() : null)
                 .build();
     }

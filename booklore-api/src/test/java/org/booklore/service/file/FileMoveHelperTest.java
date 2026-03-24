@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FileMoveHelper Tests")
@@ -349,17 +350,17 @@ class FileMoveHelperTest {
             Files.createDirectories(realDir);
             Files.createDirectories(nestedDir);
 
+            Path symlink = nestedDir.resolve("symlink");
             try {
-                Path symlink = nestedDir.resolve("symlink");
                 Files.createSymbolicLink(symlink, realDir);
-
-                fileMoveHelper.deleteEmptyParentDirsUpToLibraryFolders(nestedDir, Set.of(libraryRoot));
-
-                assertTrue(Files.exists(nestedDir), "Should not delete dir with symlink");
-                assertTrue(Files.exists(realDir), "Real directory should still exist");
-            } catch (UnsupportedOperationException e) {
-                // Symlinks not supported on this system, skip test
+            } catch (UnsupportedOperationException | IOException | SecurityException e) {
+                assumeTrue(false, "Symlinks are not available on this platform: " + e.getMessage());
             }
+
+            fileMoveHelper.deleteEmptyParentDirsUpToLibraryFolders(nestedDir, Set.of(libraryRoot));
+
+            assertTrue(Files.exists(nestedDir), "Should not delete dir with symlink");
+            assertTrue(Files.exists(realDir), "Real directory should still exist");
         }
     }
 }

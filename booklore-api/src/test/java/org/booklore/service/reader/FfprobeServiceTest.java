@@ -1,6 +1,7 @@
 package org.booklore.service.reader;
 
 import org.booklore.util.FileService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,14 +30,27 @@ class FfprobeServiceTest {
     @TempDir
     Path tempDir;
 
+    private String originalOsName;
+    private String originalOsArch;
+
     @BeforeEach
     void setUp() {
-        when(fileService.getToolsFfprobePath()).thenReturn(tempDir.resolve("tools/ffprobe").toString());
+        originalOsName = System.getProperty("os.name");
+        originalOsArch = System.getProperty("os.arch");
+        System.setProperty("os.name", "Linux");
+        System.setProperty("os.arch", "amd64");
+    }
+
+    @AfterEach
+    void tearDown() {
+        restoreSystemProperty("os.name", originalOsName);
+        restoreSystemProperty("os.arch", originalOsArch);
     }
 
     @Test
     void getFfprobeBinary_returnsExistingBinary() throws IOException {
         Path toolsDir = tempDir.resolve("tools/ffprobe");
+        when(fileService.getToolsFfprobePath()).thenReturn(toolsDir.toString());
         Files.createDirectories(toolsDir);
 
         String expectedName = getExpectedBinaryName();
@@ -52,6 +67,7 @@ class FfprobeServiceTest {
     @Test
     void getFfprobeBinary_createsDirectoryIfMissing() throws IOException {
         Path toolsDir = tempDir.resolve("tools/ffprobe");
+        when(fileService.getToolsFfprobePath()).thenReturn(toolsDir.toString());
 
         String expectedName = getExpectedBinaryName();
         Path binaryPath = toolsDir.resolve(expectedName);
@@ -75,7 +91,11 @@ class FfprobeServiceTest {
 
     @Test
     void getFfprobeBinary_setsExecutablePermission() throws IOException {
+        assumeTrue(originalOsName == null || !originalOsName.toLowerCase().contains("win"),
+                "Executable permission semantics are not reliable on Windows");
+
         Path toolsDir = tempDir.resolve("tools/ffprobe");
+        when(fileService.getToolsFfprobePath()).thenReturn(toolsDir.toString());
         Files.createDirectories(toolsDir);
 
         String expectedName = getExpectedBinaryName();
@@ -104,5 +124,13 @@ class FfprobeServiceTest {
             return "ffprobe-linux-64";
         }
         throw new IllegalStateException("Unsupported OS for test: " + osName);
+    }
+
+    private void restoreSystemProperty(String key, String value) {
+        if (value == null) {
+            System.clearProperty(key);
+        } else {
+            System.setProperty(key, value);
+        }
     }
 }
