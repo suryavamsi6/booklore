@@ -10,7 +10,7 @@ When multiple correct implementations are possible, prefer the one that reduces 
 
 **Two main services:**
 
-- **`booklore-api/`** – Spring Boot 3.5 (Java 25) REST API + WebSocket server
+- **`booklore-api/`** – Spring Boot 4.0.3 (Java 25) REST API + WebSocket server
 - **`booklore-ui/`** – Angular 21 SPA, served from the same Docker container
 
 The backend serves the compiled Angular app as static files. In development they run separately (ports 6060 and 4200).
