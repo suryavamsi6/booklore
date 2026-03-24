@@ -13,7 +13,11 @@ public class RestClientConfig {
 
     @Bean
     public RestClient restClient() {
+        var factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(5));
+        factory.setReadTimeout(Duration.ofSeconds(10));
         return RestClient.builder()
+                .requestFactory(factory)
                 .build();
     }
 
