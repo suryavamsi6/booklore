@@ -1,4 +1,4 @@
-@use '../../../../shared/styles/settings-shared' as settings;
+@use '../../../shared/styles/settings-shared' as settings;
 
 .main-container {
   @include settings.settings-page-container;
