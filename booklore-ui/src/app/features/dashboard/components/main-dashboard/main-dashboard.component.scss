@@ -1,3 +1,19 @@
+.readiness-warnings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1rem 0;
+
+  p-message {
+    width: 100%;
+  }
+
+  .readiness-warnings-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
 .dashboard-container {
   height: calc(100dvh - 6.7rem);
   overflow-y: auto;

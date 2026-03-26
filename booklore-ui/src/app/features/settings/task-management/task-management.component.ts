@@ -228,6 +228,32 @@ export class TaskManagementComponent implements OnInit, OnDestroy {
       });
   }
 
+  retryTask(taskType: string): void {
+    const history = this.taskHistories.get(taskType);
+    if (!history?.id) {
+      this.showMessage('error', this.t.translate('common.error'), this.t.translate('settingsTasks.toast.retryError'));
+      return;
+    }
+
+    this.executingTasks.add(taskType);
+    this.taskService.retryTask(history.id)
+      .pipe(finalize(() => this.executingTasks.delete(taskType)))
+      .subscribe({
+        next: () => {
+          this.showMessage('success', this.t.translate('settingsTasks.toast.taskQueued'), this.t.translate('settingsTasks.toast.retrySuccess'));
+          this.loadTasks();
+        },
+        error: (error) => {
+          console.error('Error retrying task:', error);
+          this.showMessage('error', this.t.translate('common.error'), this.t.translate('settingsTasks.toast.retryError'));
+        }
+      });
+  }
+
+  canRetryTask(history: TaskHistory | undefined): boolean {
+    return history?.retryEligible === true;
+  }
+
   cancelTask(taskType: string): void {
     const history = this.taskHistories.get(taskType);
     if (!history?.id) {

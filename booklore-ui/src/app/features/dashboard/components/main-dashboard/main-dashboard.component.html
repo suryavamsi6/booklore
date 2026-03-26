@@ -1,4 +1,15 @@
 <ng-container *transloco="let t; prefix: 'dashboard.main'">
+  @if ((readinessWarnings$ | async)?.length) {
+    <div class="readiness-warnings">
+      @for (warning of (readinessWarnings$ | async); track warning) {
+        <p-message severity="warn" [text]="warning"></p-message>
+      }
+      <div class="readiness-warnings-actions">
+        <p-button [label]="t('systemStatus.viewStatus')" icon="pi pi-server" severity="warning" [outlined]="true" size="small" (click)="goToSystemStatus()"></p-button>
+        <p-button [label]="t('systemStatus.dismiss')" icon="pi pi-times" severity="secondary" [outlined]="true" size="small" (click)="dismissWarnings()"></p-button>
+      </div>
+    </div>
+  }
   <div class="dashboard-container">
     @if ((bookState$ | async)?.loaded === false) {
       <div class="loading-state">

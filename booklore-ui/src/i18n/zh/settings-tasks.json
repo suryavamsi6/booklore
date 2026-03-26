@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "运行",
-        "rerun": "重新运行"
+        "rerun": "重新运行",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "元数据替换模式：",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "所选书籍的元数据更新已成功计划。",
         "metadataAlreadyRunningDetail": "元数据刷新任务已在进行中。请等待其完成后再启动新任务。",
         "metadataFailed": "元数据更新失败",
-        "metadataFailedDetail": "计划元数据更新时发生意外错误。请稍后重试或联系支持团队。"
-    }
+        "metadataFailedDetail": "计划元数据更新时发生意外错误。请稍后重试或联系支持团队。",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

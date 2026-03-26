@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "Kör",
-        "rerun": "Kör om"
+        "rerun": "Kör om",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "Metadataersättningsläge:",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "Metadatauppdateringen för de valda böckerna har schemalagts.",
         "metadataAlreadyRunningDetail": "En metadatauppdatering pågår redan. Vänta tills den slutförs innan du startar en ny.",
         "metadataFailed": "Metadatauppdatering misslyckades",
-        "metadataFailedDetail": "Ett oväntat fel uppstod vid schemaläggning av metadatauppdateringen. Försök igen senare eller kontakta support om problemet kvarstår."
-    }
+        "metadataFailedDetail": "Ett oväntat fel uppstod vid schemaläggning av metadatauppdateringen. Försök igen senare eller kontakta support om problemet kvarstår.",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

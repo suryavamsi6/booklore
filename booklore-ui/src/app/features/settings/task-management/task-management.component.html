@@ -142,6 +142,16 @@
                       (onClick)="executeTask(taskInfo.taskType)">
                     </p-button>
                   }
+                  @if (canRetryTask(getTaskHistory(taskInfo.taskType)) && !isTaskRunning(taskInfo.taskType)) {
+                    <p-button
+                      [label]="t('buttons.retry')"
+                      icon="pi pi-refresh"
+                      severity="warning"
+                      [outlined]="true"
+                      [disabled]="isTaskExecuting(taskInfo.taskType)"
+                      (onClick)="retryTask(taskInfo.taskType)">
+                    </p-button>
+                  }
                   @if (canCancelTask(getTaskHistory(taskInfo.taskType)) && !isTaskStale(getTaskHistory(taskInfo.taskType))) {
                     <p-button
                       [label]="'common.cancel' | transloco"
@@ -182,6 +192,19 @@
                     </ng-template>
                   </p-select>
                   <span class="option-hint">{{ getMetadataReplaceDescription(selectedMetadataReplaceMode) }}</span>
+                </div>
+              }
+
+              @if (!isTaskRunning(taskInfo.taskType) && getTaskHistory(taskInfo.taskType)?.failureReason) {
+                <div class="task-failure-reason">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <div class="failure-reason-content">
+                    <span class="failure-reason-label">{{ t('failureReason') }}:</span>
+                    <span class="failure-reason-text">{{ getTaskHistory(taskInfo.taskType)!.failureReason }}</span>
+                    @if ((getTaskHistory(taskInfo.taskType)?.retryCount ?? 0) > 0) {
+                      <span class="retry-count-badge">{{ t('retryCount') }}: {{ getTaskHistory(taskInfo.taskType)!.retryCount }}</span>
+                    }
+                  </div>
                 </div>
               }
 

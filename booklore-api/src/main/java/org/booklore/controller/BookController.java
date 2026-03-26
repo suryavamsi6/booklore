@@ -5,6 +5,7 @@ import org.booklore.exception.ApiError;
 import org.booklore.model.dto.Book;
 import org.booklore.model.dto.BookRecommendation;
 import org.booklore.model.dto.BookViewerSettings;
+import org.booklore.model.dto.PagedResponse;
 import org.booklore.model.dto.request.AttachBookFileRequest;
 import org.booklore.model.dto.request.CreatePhysicalBookRequest;
 import org.booklore.model.dto.request.DuplicateDetectionRequest;
@@ -62,6 +63,17 @@ public class BookController {
     private final ReadingProgressService readingProgressService;
     private final PhysicalBookService physicalBookService;
     private final DuplicateDetectionService duplicateDetectionService;
+
+    @Operation(summary = "Get all books (paged)", description = "Retrieve a paginated list of books. Optionally filter by library.")
+    @ApiResponse(responseCode = "200", description = "Paginated list of books returned successfully")
+    @GetMapping("/paged")
+    public ResponseEntity<PagedResponse<Book>> getBooksPaged(
+            @Parameter(description = "Zero-based page index") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size (1–200)") @RequestParam(defaultValue = "50") @Min(1) @Max(200) int size,
+            @Parameter(description = "Optional library ID to filter books") @RequestParam(required = false) Long libraryId,
+            @Parameter(description = "Include book descriptions in the response") @RequestParam(required = false, defaultValue = "false") boolean withDescription) {
+        return ResponseEntity.ok(bookService.getPagedBookDTOs(page, size, libraryId, withDescription));
+    }
 
     @Operation(summary = "Get all books", description = "Retrieve a list of all books. Optionally include descriptions.")
     @ApiResponse(responseCode = "200", description = "List of books returned successfully")

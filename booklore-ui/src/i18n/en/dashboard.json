@@ -5,7 +5,12 @@
     "welcomeSubtitle": "Let's create your first library",
     "welcomeDescription": "A library is where all your books live. Start building your digital collection today!",
     "createLibrary": "Create Your Library",
-    "customizeDashboard": "Customize Dashboard"
+    "customizeDashboard": "Customize Dashboard",
+    "systemStatus": {
+      "warnings": "System has active warnings",
+      "viewStatus": "View System Status",
+      "dismiss": "Dismiss"
+    }
   },
   "scroller": {
     "noBooksFound": "No books found for this scroller.",

@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "Zaženi",
-        "rerun": "Ponovno zaženi"
+        "rerun": "Ponovno zaženi",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "Način zamenjave metapodatkov:",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "Posodobitev metapodatkov za izbrane knjige je bila uspešno načrtovana.",
         "metadataAlreadyRunningDetail": "Opravilo osveževanja metapodatkov je že v teku. Počakaj, da se konča, preden začneš novega.",
         "metadataFailed": "Posodobitev metapodatkov ni uspela",
-        "metadataFailedDetail": "Prišlo je do nepričakovane napake pri načrtovanju posodobitve metapodatkov. Poskusi znova pozneje ali stopi v stik s podporo."
-    }
+        "metadataFailedDetail": "Prišlo je do nepričakovane napake pri načrtovanju posodobitve metapodatkov. Poskusi znova pozneje ali stopi v stik s podporo.",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

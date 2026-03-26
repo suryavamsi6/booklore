@@ -1,8 +1,8 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {LibraryService} from '../../../book/service/library.service';
-import {Observable} from 'rxjs';
-import {map, shareReplay, switchMap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, Observable, of} from 'rxjs';
+import {catchError, map, shareReplay, switchMap} from 'rxjs/operators';
 import {Button} from 'primeng/button';
 import {AsyncPipe} from '@angular/common';
 import {DashboardScrollerComponent} from '../dashboard-scroller/dashboard-scroller.component';
@@ -22,6 +22,10 @@ import {DialogLauncherService} from '../../../../shared/services/dialog-launcher
 import {SortService} from '../../../book/service/sort.service';
 import {PageTitleService} from "../../../../shared/service/page-title.service";
 import {SortDirection, SortOption} from '../../../book/model/sort.model';
+import {SystemStatusService} from '../../../settings/system-status/system-status.service';
+import {ReadinessState} from '../../../../shared/models/system-status.model';
+import {Router} from '@angular/router';
+import {Message} from 'primeng/message';
 
 const DEFAULT_MAX_ITEMS = 20;
 
@@ -35,7 +39,8 @@ const DEFAULT_MAX_ITEMS = 20;
     AsyncPipe,
     ProgressSpinner,
     TooltipModule,
-    TranslocoDirective
+    TranslocoDirective,
+    Message
   ],
   standalone: true
 })
@@ -50,9 +55,31 @@ export class MainDashboardComponent implements OnInit {
   private sortService = inject(SortService);
   private pageTitle = inject(PageTitleService);
   private readonly t = inject(TranslocoService);
+  private systemStatusService = inject(SystemStatusService);
+  private router = inject(Router);
+
+  private warningsDismissed$ = new BehaviorSubject<boolean>(false);
 
   bookState$ = this.bookService.bookState$;
   dashboardConfig$ = this.dashboardConfigService.config$;
+
+  readinessWarnings$: Observable<string[]> = combineLatest([
+    this.userService.userState$.pipe(
+      switchMap(state => {
+        if (!state.user?.permissions?.admin) {
+          return of([]);
+        }
+        return this.systemStatusService.getReadiness().pipe(
+          map(status => status.state !== ReadinessState.READY ? status.activeWarnings : []),
+          catchError(() => of([]))
+        );
+      })
+    ),
+    this.warningsDismissed$
+  ]).pipe(
+    map(([warnings, dismissed]) => dismissed ? [] : warnings),
+    shareReplay(1)
+  );
 
   private scrollerBooksCache = new Map<string, Observable<Book[]>>();
 
@@ -231,6 +258,14 @@ export class MainDashboardComponent implements OnInit {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled.slice(0, maxItems);
+  }
+
+  dismissWarnings(): void {
+    this.warningsDismissed$.next(true);
+  }
+
+  goToSystemStatus(): void {
+    this.router.navigate(['/settings'], {queryParams: {tab: 'system-status'}});
   }
 
   openDashboardSettings(): void {

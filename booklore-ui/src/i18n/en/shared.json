@@ -158,5 +158,54 @@
     "toast": {
       "createFailedDefault": "Failed to create admin user. Try again."
     }
+  },
+  "systemStatus": {
+    "title": "System Status",
+    "readiness": "Instance Readiness",
+    "healthChecks": "Health Checks",
+    "backupValidation": "Backup Validation",
+    "loading": "Loading system status...",
+    "loadError": "Failed to load data. Please try again.",
+    "warnings": "Active Warnings",
+    "actions": "Recommended Actions",
+    "noWarnings": "No active warnings",
+    "state": {
+      "label": "State",
+      "READY": "Ready",
+      "READY_WITH_WARNINGS": "Ready with Warnings",
+      "SETUP_INCOMPLETE": "Setup Incomplete",
+      "DEGRADED": "Degraded",
+      "UNINITIALIZED": "Not Initialized"
+    },
+    "checks": {
+      "setupComplete": "Setup Complete",
+      "adminProvisioned": "Admin Provisioned",
+      "databaseReachable": "Database Reachable",
+      "backgroundProcessing": "Background Processing Healthy",
+      "librariesHealthy": "Libraries Healthy"
+    },
+    "health": {
+      "HEALTHY": "Healthy",
+      "WARNING": "Warning",
+      "UNHEALTHY": "Unhealthy"
+    },
+    "component": {
+      "API": "API Service",
+      "DATABASE": "Database",
+      "LIBRARY_STORAGE": "Library Storage",
+      "BOOKDROP": "BookDrop",
+      "TASKS": "Background Tasks",
+      "SYNC": "Device Sync"
+    },
+    "backup": {
+      "NOT_AVAILABLE": "No Backup Detected",
+      "STALE": "Backup Is Stale",
+      "RECENT": "Backup Is Recent",
+      "VALIDATED": "Backup Validated",
+      "lastDetected": "Last detected",
+      "guidance": "Guidance",
+      "included": "Included Components",
+      "missing": "Missing Components"
+    }
   }
 }
