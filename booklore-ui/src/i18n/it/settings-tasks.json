@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "Esegui",
-        "rerun": "Riesegui"
+        "rerun": "Riesegui",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "Modalità sostituzione metadati:",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "L'aggiornamento dei metadati per i libri selezionati è stato pianificato con successo.",
         "metadataAlreadyRunningDetail": "Un'attività di aggiornamento metadati è già in corso. Attendi il suo completamento prima di avviarne un'altra.",
         "metadataFailed": "Aggiornamento metadati fallito",
-        "metadataFailedDetail": "Si è verificato un errore imprevisto durante la pianificazione dell'aggiornamento dei metadati. Riprova più tardi o contatta il supporto se il problema persiste."
-    }
+        "metadataFailedDetail": "Si è verificato un errore imprevisto durante la pianificazione dell'aggiornamento dei metadati. Riprova più tardi o contatta il supporto se il problema persiste.",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

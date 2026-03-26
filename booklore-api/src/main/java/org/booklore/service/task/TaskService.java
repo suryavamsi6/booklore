@@ -9,7 +9,9 @@ import org.booklore.model.dto.request.TaskCreateRequest;
 import org.booklore.model.dto.response.TaskCancelResponse;
 import org.booklore.model.dto.response.TaskCreateResponse;
 import org.booklore.model.entity.TaskCronConfigurationEntity;
+import org.booklore.model.entity.TaskHistoryEntity;
 import org.booklore.model.enums.TaskType;
+import org.booklore.repository.TaskHistoryRepository;
 import org.booklore.task.TaskCancellationManager;
 import org.booklore.task.TaskStatus;
 import org.booklore.task.tasks.Task;
@@ -41,6 +43,7 @@ public class TaskService {
 
     private final AuthenticationService authenticationService;
     private final TaskHistoryService taskHistoryService;
+    private final TaskHistoryRepository taskHistoryRepository;
     private final TaskCronService taskCronService;
     private final Map<TaskType, Task> taskRegistry;
     private final ConcurrentMap<TaskType, String> runningTasks = new ConcurrentHashMap<>();
@@ -53,6 +56,7 @@ public class TaskService {
     public TaskService(
             AuthenticationService authenticationService,
             TaskHistoryService taskHistoryService,
+            TaskHistoryRepository taskHistoryRepository,
             @Lazy TaskCronService taskCronService,
             List<Task> tasks,
             TaskCancellationManager cancellationManager,
@@ -61,6 +65,7 @@ public class TaskService {
             TaskScheduler taskScheduler) {
         this.authenticationService = authenticationService;
         this.taskHistoryService = taskHistoryService;
+        this.taskHistoryRepository = taskHistoryRepository;
         this.taskCronService = taskCronService;
         this.taskRegistry = tasks.stream().collect(Collectors.toMap(Task::getTaskType, Function.identity()));
         this.cancellationManager = cancellationManager;
@@ -195,6 +200,20 @@ public class TaskService {
                 )
         );
         return response;
+    }
+
+    public TaskCreateResponse retryTask(String taskId) {
+        TaskHistoryEntity failedTask = taskHistoryRepository.findById(taskId)
+                .orElseThrow(() -> new APIException("Task not found: " + taskId, HttpStatus.NOT_FOUND));
+        if (!failedTask.isRetryEligible()) {
+            throw new APIException("Task is not eligible for retry: " + taskId, HttpStatus.BAD_REQUEST);
+        }
+        taskHistoryService.incrementRetryCount(taskId);
+        TaskCreateRequest retryRequest = new TaskCreateRequest();
+        retryRequest.setTaskType(failedTask.getType());
+        retryRequest.setTriggeredByCron(false);
+        retryRequest.setOptions(failedTask.getTaskOptions());
+        return runAsUser(retryRequest);
     }
 
     public TaskCancelResponse cancelTask(String taskId) {

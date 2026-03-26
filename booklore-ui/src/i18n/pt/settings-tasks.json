@@ -24,7 +24,8 @@
     },
     "buttons": {
         "run": "Executar",
-        "rerun": "Reexecutar"
+        "rerun": "Reexecutar",
+        "retry": "Retry"
     },
     "metadataReplace": {
         "label": "Modo de Substituição de Metadados:",
@@ -64,6 +65,10 @@
         "metadataScheduledDetail": "A atualização de metadados dos livros selecionados foi agendada com sucesso.",
         "metadataAlreadyRunningDetail": "Uma tarefa de atualização de metadados já está em andamento. Aguarde sua conclusão antes de iniciar outra.",
         "metadataFailed": "Atualização de Metadados Falhou",
-        "metadataFailedDetail": "Ocorreu um erro inesperado ao agendar a atualização de metadados. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
-    }
+        "metadataFailedDetail": "Ocorreu um erro inesperado ao agendar a atualização de metadados. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir.",
+        "retrySuccess": "Task has been re-queued.",
+        "retryError": "Failed to retry task."
+    },
+    "failureReason": "Failure Reason",
+    "retryCount": "Retry Count"
 }

@@ -71,6 +71,10 @@
     "eslint": {
       "ajv": "^6.14.0"
     },
-    "undici": "^7.24.0"
+    "undici": "^7.24.0",
+    "micromatch": {
+      "picomatch": "^2.3.2"
+    },
+    "picomatch": "^4.0.4"
   }
 }

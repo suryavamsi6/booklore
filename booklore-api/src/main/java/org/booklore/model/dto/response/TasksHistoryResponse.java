@@ -30,5 +30,8 @@ public class TasksHistoryResponse {
         private Instant createdAt;
         private Instant updatedAt;
         private Instant completedAt;
+        private boolean retryEligible;
+        private int retryCount;
+        private String failureReason;
     }
 }

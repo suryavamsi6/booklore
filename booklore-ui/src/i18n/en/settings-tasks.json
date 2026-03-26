@@ -24,7 +24,8 @@
   },
   "buttons": {
     "run": "Run",
-    "rerun": "Re-run"
+    "rerun": "Re-run",
+    "retry": "Retry"
   },
   "metadataReplace": {
     "label": "Metadata Replace Mode:",
@@ -42,6 +43,8 @@
     "processing": "Processing...",
     "stuckMessage": "Task appears to be stuck (no updates received)"
   },
+  "failureReason": "Failure Reason",
+  "retryCount": "Retry Count",
   "toast": {
     "taskQueued": "Task Queued",
     "taskQueuedDetail": "{{name}} has been queued and will run in the background.",
@@ -64,6 +67,8 @@
     "metadataScheduledDetail": "The metadata update for the selected books has been successfully scheduled.",
     "metadataAlreadyRunningDetail": "A metadata refresh task is already in progress. Please wait for it to complete before starting another one.",
     "metadataFailed": "Metadata Update Failed",
-    "metadataFailedDetail": "An unexpected error occurred while scheduling the metadata update. Please try again later or contact support if the issue persists."
+    "metadataFailedDetail": "An unexpected error occurred while scheduling the metadata update. Please try again later or contact support if the issue persists.",
+    "retrySuccess": "Task has been re-queued.",
+    "retryError": "Failed to retry task."
   }
 }
