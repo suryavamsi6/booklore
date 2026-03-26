@@ -2,7 +2,6 @@ import {Component, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {ProgressSpinner} from 'primeng/progressspinner';
-import {Card} from 'primeng/card';
 import {Tag} from 'primeng/tag';
 import {Message} from 'primeng/message';
 import {SystemStatusService} from './system-status.service';
@@ -22,7 +21,6 @@ import {
     CommonModule,
     TranslocoDirective,
     ProgressSpinner,
-    Card,
     Tag,
     Message,
   ],

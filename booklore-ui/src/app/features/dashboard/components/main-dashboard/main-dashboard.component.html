@@ -5,7 +5,7 @@
         <p-message severity="warn" [text]="warning"></p-message>
       }
       <div class="readiness-warnings-actions">
-        <p-button [label]="t('systemStatus.viewStatus')" icon="pi pi-server" severity="warning" [outlined]="true" size="small" (click)="goToSystemStatus()"></p-button>
+        <p-button [label]="t('systemStatus.viewStatus')" icon="pi pi-server" severity="warn" [outlined]="true" size="small" (click)="goToSystemStatus()"></p-button>
         <p-button [label]="t('systemStatus.dismiss')" icon="pi pi-times" severity="secondary" [outlined]="true" size="small" (click)="dismissWarnings()"></p-button>
       </div>
     </div>
