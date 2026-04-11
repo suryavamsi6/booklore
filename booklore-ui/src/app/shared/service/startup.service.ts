@@ -15,11 +15,7 @@ export class StartupService {
       .subscribe(() => {
         this.userService.getMyself()
           .pipe(catchError(() => of(null)))
-          .subscribe(user => {
-            if (user) {
-              this.userService.setInitialUser(user);
-            }
-          });
+          .subscribe();
       });
 
     return Promise.resolve();
