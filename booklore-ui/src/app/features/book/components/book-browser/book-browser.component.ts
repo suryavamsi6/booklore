@@ -177,6 +177,7 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
     this.t
   );
   private sortService = inject(SortService);
+  protected readonly onBookCardSelect = (book: Book, selected: boolean): void => this.handleBookSelect(book, selected);
 
   private bookStateSubscription: Subscription | undefined;
 

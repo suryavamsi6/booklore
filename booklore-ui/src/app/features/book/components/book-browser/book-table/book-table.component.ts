@@ -11,12 +11,31 @@ import {Button} from 'primeng/button';
 import {BookService} from '../../../service/book.service';
 import {BookMetadataManageService} from '../../../service/book-metadata-manage.service';
 import {MessageService} from 'primeng/api';
-import {RouterLink} from '@angular/router';
+import {RouterLink, UrlTree} from '@angular/router';
 import {filter, Subject} from 'rxjs';
 import {UserService} from '../../../../settings/user-management/user.service';
 import {take, takeUntil} from 'rxjs/operators';
 import {ReadStatusHelper} from '../../../helpers/read-status.helper';
 import {TranslocoDirective, TranslocoService} from '@jsverse/transloco';
+
+interface BookTableLink {
+  url: UrlTree | string;
+  anchor: string | number;
+}
+
+interface BookTableRowViewModel {
+  bookId: number;
+  book: Book;
+  metadata: BookMetadata;
+  isMetadataFullyLocked: boolean;
+  thumbnailUrl: string;
+  readStatusIcon: string;
+  readStatusClass: string;
+  readStatusTooltip: string;
+  showStatusIcon: boolean;
+  cellValues: Record<string, string | number>;
+  clickableValues: Partial<Record<string, BookTableLink[]>>;
+}
 
 @Component({
   selector: 'app-book-table',
@@ -38,6 +57,7 @@ import {TranslocoDirective, TranslocoService} from '@jsverse/transloco';
 export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
   selectedBooks: Book[] = [];
   selectedBookIds = new Set<number>();
+  rowViewModelMap: Record<number, BookTableRowViewModel> = {};
 
   @Output() selectedBooksChange = new EventEmitter<Set<number>>();
   @Input() books: Book[] = [];
@@ -56,6 +76,7 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
 
   private metadataCenterViewMode: 'route' | 'dialog' = 'route';
   private destroy$ = new Subject<void>();
+  private readonly handleResize = () => this.setScrollHeight();
 
   readonly allColumns: { field: string; header: string }[] = [
     {field: 'readStatus', header: this.t.translate('book.columnPref.columns.readStatus')},
@@ -97,8 +118,9 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
 
     this.selectedBookIds = this.preselectedBookIds;
     this.selectedBooks = this.bookService.getBooksByIdsFromState([...this.selectedBookIds]);
+    this.rebuildRowViewModels();
     this.setScrollHeight();
-    window.addEventListener('resize', this.setScrollHeight.bind(this));
+    window.addEventListener('resize', this.handleResize);
   }
 
   setScrollHeight() {
@@ -109,10 +131,9 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges() {
-    const wrapperElements: HTMLCollection = document.getElementsByClassName('p-virtualscroller');
-    Array.prototype.forEach.call(wrapperElements, function (wrapperElement) {
-      wrapperElement.style["height"] = 'calc(100dvh - 160px)';
-    });
+    this.selectedBookIds = this.preselectedBookIds;
+    this.selectedBooks = this.bookService.getBooksByIdsFromState([...this.selectedBookIds]);
+    this.rebuildRowViewModels();
   }
 
   selectAllBooks(): void {
@@ -189,6 +210,10 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
     return mb >= 1 ? `${mb.toFixed(1)} MB` : `${mb.toFixed(2)} MB`;
   }
 
+  getNumericRating(value: unknown): number {
+    return typeof value === 'number' ? value : 0;
+  }
+
   getReadStatusIcon(readStatus: ReadStatus | undefined): string {
     return this.readStatusHelper.getReadStatusIcon(readStatus);
   }
@@ -222,7 +247,7 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
         return [
           {
             url: this.urlHelper.getBookUrl(book),
-            anchor: metadata.title ?? book.fileName
+            anchor: metadata.title ?? book.fileName ?? ''
           }
         ];
 
@@ -238,7 +263,7 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
         return [
           {
             url: this.urlHelper.filterBooksBy('series', metadata.seriesName ?? ''),
-            anchor: metadata.seriesName
+            anchor: metadata.seriesName ?? ''
           }
         ]
       case 'isbn':
@@ -323,6 +348,48 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  private rebuildRowViewModels(): void {
+    this.rowViewModelMap = Object.fromEntries(this.books
+      .filter((book): book is Book & { metadata: BookMetadata } => !!book.metadata)
+      .map(book => {
+        const row = this.buildRowViewModel(book);
+        return [row.bookId, row] as const;
+      }));
+  }
+
+  private buildRowViewModel(book: Book & { metadata: BookMetadata }): BookTableRowViewModel {
+    const metadata = book.metadata;
+    const cellFields = new Set(this.visibleColumns.map(col => col.field));
+    const cellValues: Record<string, string | number> = {};
+    const clickableValues: Partial<Record<string, BookTableLink[]>> = {};
+
+    cellFields.forEach(field => {
+      cellValues[field] = this.getCellValue(metadata, book, field);
+
+      if (this.isLinkField(field)) {
+        clickableValues[field] = this.getCellClickableValue(metadata, book, field);
+      }
+    });
+
+    return {
+      bookId: book.id,
+      book,
+      metadata,
+      isMetadataFullyLocked: this.isMetadataFullyLocked(metadata),
+      thumbnailUrl: this.urlHelper.getThumbnailUrl(metadata.bookId, metadata.coverUpdatedOn),
+      readStatusIcon: this.readStatusHelper.getReadStatusIcon(book.readStatus),
+      readStatusClass: this.readStatusHelper.getReadStatusClass(book.readStatus),
+      readStatusTooltip: this.readStatusHelper.getReadStatusTooltip(book.readStatus),
+      showStatusIcon: this.readStatusHelper.shouldShowStatusIcon(book.readStatus),
+      cellValues,
+      clickableValues
+    };
+  }
+
+  private isLinkField(field: string): boolean {
+    return ['title', 'authors', 'publisher', 'seriesName', 'categories', 'language'].includes(field);
+  }
+
   toggleMetadataLock(metadata: BookMetadata): void {
     const lockKeys = Object.keys(metadata).filter(key => key.endsWith('Locked'));
     const allLocked = lockKeys.every(key => metadata[key] === true);
@@ -349,6 +416,6 @@ export class BookTableComponent implements OnInit, OnDestroy, OnChanges {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    window.removeEventListener('resize', this.setScrollHeight.bind(this));
+    window.removeEventListener('resize', this.handleResize);
   }
 }

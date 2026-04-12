@@ -30,6 +30,8 @@ import {BookCardOverlayPreferenceService} from '../book-card-overlay-preference.
 import {AppSettingsService} from '../../../../../shared/service/app-settings.service';
 import {TranslocoPipe, TranslocoService} from '@jsverse/transloco';
 
+const EBOOK_TYPES: BookType[] = ['EPUB', 'PDF', 'CBX', 'FB2', 'MOBI', 'AZW3'];
+
 @Component({
   selector: 'app-book-card',
   templateUrl: './book-card.component.html',
@@ -96,6 +98,8 @@ export class BookCardComponent implements OnInit, OnChanges, OnDestroy {
   protected _progressTooltip: string = '';
   protected _isContinueReading: boolean = false;
   protected _readButtonIcon: string = 'pi pi-book';
+  protected _displayFormat: string | null = null;
+  protected _primaryReadingUrl: ReturnType<UrlHelperService['getBookPrimaryReadingUrl']> | null = null;
 
   private metadataCenterViewMode: 'route' | 'dialog' = 'route';
   private destroy$ = new Subject<void>();
@@ -207,6 +211,9 @@ export class BookCardComponent implements OnInit, OnChanges, OnDestroy {
     } else {
       this._readButtonIcon = this._isContinueReading ? 'pi pi-forward' : 'pi pi-book';
     }
+
+    this._displayFormat = this.computeDisplayFormat();
+    this._primaryReadingUrl = this.hasDigitalFile() ? this.urlHelper.getBookPrimaryReadingUrl(this.book) : null;
   }
 
   get hasProgress(): boolean {
@@ -239,6 +246,14 @@ export class BookCardComponent implements OnInit, OnChanges, OnDestroy {
 
   get coverImageUrl(): string {
     return this._coverImageUrl;
+  }
+
+  get displayFormat(): string | null {
+    return this._displayFormat;
+  }
+
+  get primaryReadingUrl(): ReturnType<UrlHelperService['getBookPrimaryReadingUrl']> | null {
+    return this._primaryReadingUrl;
   }
 
   private buildReadStatusMenuItems(): void {
@@ -296,9 +311,26 @@ export class BookCardComponent implements OnInit, OnChanges, OnDestroy {
     if (book.pdfProgress) return 'PDF';
     if (book.cbxProgress) return 'CBX';
     const alternativeFormat = book.alternativeFormats?.find(f =>
-      f.bookType && ['EPUB', 'PDF', 'CBX', 'FB2', 'MOBI', 'AZW3'].includes(f.bookType)
+      f.bookType && EBOOK_TYPES.includes(f.bookType)
     );
     return alternativeFormat?.bookType;
+  }
+
+  private computeDisplayFormat(): string | null {
+    if (!this.book?.primaryFile) {
+      return 'PHY';
+    }
+    if (this.forceEbookMode && this.book.primaryFile?.bookType === 'AUDIOBOOK') {
+      const ebookType = this.getEbookType(this.book);
+      if (ebookType) {
+        return ebookType;
+      }
+    }
+    const ext = this.book?.primaryFile?.extension;
+    if (ext) {
+      return ext.toUpperCase();
+    }
+    return this.getFileExtension(this.book?.primaryFile?.filePath);
   }
 
   onMenuShow(): void {
@@ -849,23 +881,6 @@ export class BookCardComponent implements OnInit, OnChanges, OnDestroy {
     const parts = filePath.split('.');
     if (parts.length < 2) return null;
     return parts.pop()?.toUpperCase() || null;
-  }
-
-  getDisplayFormat(): string | null {
-    if (!this.book?.primaryFile) {
-      return 'PHY';
-    }
-    if (this.forceEbookMode && this.book.primaryFile?.bookType === 'AUDIOBOOK') {
-      const ebookType = this.getEbookType(this.book);
-      if (ebookType) {
-        return ebookType;
-      }
-    }
-    const ext = this.book?.primaryFile?.extension;
-    if (ext) {
-      return ext.toUpperCase();
-    }
-    return this.getFileExtension(this.book?.primaryFile?.filePath);
   }
 
   hasDigitalFile(): boolean {

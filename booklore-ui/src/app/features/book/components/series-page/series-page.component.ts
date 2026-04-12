@@ -138,6 +138,7 @@ export class SeriesPageComponent implements OnDestroy, AfterViewChecked {
   // Menu items
   protected metadataMenuItems: MenuItem[] | undefined;
   protected moreActionsMenuItems: MenuItem[] | undefined;
+  protected readonly onBookCardSelect = (book: Book, selected: boolean): void => this.handleBookSelect(book, selected);
 
   seriesParam$: Observable<string> = this.route.paramMap.pipe(
     map((params) => params.get("seriesName") || ""),

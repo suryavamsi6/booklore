@@ -17,6 +17,9 @@ public class Book {
     private Long libraryId;
     private String libraryName;
     private BookFile primaryFile;
+    private String fileName;
+    private String filePath;
+    private Long fileSizeKb;
     private String title;
     private Instant lastReadTime;
     private Instant addedOn;
@@ -35,5 +38,7 @@ public class Book {
     private LibraryPath libraryPath;
     private List<BookFile> alternativeFormats;
     private List<BookFile> supplementaryFiles;
+    private Integer seriesCount;
+    private List<Book> seriesBooks;
     private Boolean isPhysical;
 }

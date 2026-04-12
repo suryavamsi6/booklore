@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {BehaviorSubject, Observable, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, of, throwError} from 'rxjs';
 import {API_CONFIG} from '../../../core/config/api-config';
 import {Library} from '../../book/model/library.model';
 import {catchError, distinctUntilChanged, finalize, shareReplay, tap} from 'rxjs/operators';
@@ -372,11 +372,9 @@ export class UserService {
   userState$ = this.userStateSubject.asObservable().pipe(
     tap(state => {
       if (!state.loaded && !state.error && !this.loading$) {
-        this.loading$ = this.fetchMyself().pipe(
-          shareReplay(1),
-          finalize(() => (this.loading$ = null))
-        );
-        this.loading$.subscribe();
+        this.getMyself().subscribe({
+          error: () => undefined
+        });
       }
     })
   );
@@ -401,7 +399,22 @@ export class UserService {
   }
 
   getMyself(): Observable<User> {
-    return this.http.get<User>(`${this.userUrl}/me`);
+    const current = this.userStateSubject.value;
+
+    if (current.loaded && current.user) {
+      return of(current.user);
+    }
+
+    if (this.loading$) {
+      return this.loading$;
+    }
+
+    this.loading$ = this.fetchMyself().pipe(
+      shareReplay(1),
+      finalize(() => (this.loading$ = null))
+    );
+
+    return this.loading$;
   }
 
   createUser(userData: Omit<User, 'id'>): Observable<void> {

@@ -111,7 +111,7 @@
                         <div class="virtual-scroller-item"
                           [ngStyle]="{width: currentCardSize.width + 'px', height: currentCardSize.height + 'px'}">
                           <app-book-card
-                            [index]="books.indexOf(book)"
+                            [index]="scroll.viewPortInfo.startIndex + i"
                             [book]="book"
                             [isSeriesCollapsed]="false"
                             [overlayPreferenceService]="bookCardOverlayPreferenceService">

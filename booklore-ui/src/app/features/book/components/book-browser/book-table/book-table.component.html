@@ -33,26 +33,26 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-book>
-    @if (book.metadata; as metadata) {
+    @if (rowViewModelMap[book.id]; as row) {
       <tr style="height:46px">
         <td>
           <p-tableCheckbox [value]="book"/>
         </td>
         <td class="cell-center">
           <p-button
-            [icon]="isMetadataFullyLocked(metadata) ? 'pi pi-lock' : 'pi pi-lock-open'"
-            [severity]="isMetadataFullyLocked(metadata) ? 'danger' : 'success'"
+            [icon]="row.isMetadataFullyLocked ? 'pi pi-lock' : 'pi pi-lock-open'"
+            [severity]="row.isMetadataFullyLocked ? 'danger' : 'success'"
             [text]="true"
-            [title]="isMetadataFullyLocked(metadata) ? t('locked') : t('unlocked')"
+            [title]="row.isMetadataFullyLocked ? t('locked') : t('unlocked')"
             size="small"
             [style]="{ width: '1.5rem', height: '1.5rem', padding: '0', fontSize: '0.75rem' }"
-            (click)="toggleMetadataLock(metadata)">
+            (click)="toggleMetadataLock(row.metadata)">
           </p-button>
         </td>
         <td>
-          <a [routerLink]="urlHelper.getBookUrl(book)">
+          <a [routerLink]="urlHelper.getBookUrl(row.book)">
             <img
-              [attr.src]="urlHelper.getThumbnailUrl(metadata.bookId, metadata.coverUpdatedOn)"
+              [attr.src]="row.thumbnailUrl"
               [alt]="t('bookCoverAlt')"
               class="cover-thumbnail"
               tooltipPosition="left"
@@ -63,11 +63,11 @@
           <ng-template #tooltipContent>
             <div class="tooltip-cover-container">
               <img
-                [attr.src]="urlHelper.getThumbnailUrl(metadata.bookId, metadata.coverUpdatedOn)"
+                [attr.src]="row.thumbnailUrl"
                 [alt]="t('bookCoverAlt')"
                 class="tooltip-cover-image"
               />
-              <em class="tooltip-cover-title">{{ metadata.title }}</em>
+              <em class="tooltip-cover-title">{{ row.metadata.title }}</em>
             </div>
           </ng-template>
         </td>
@@ -75,12 +75,12 @@
         @for (col of visibleColumns; track col.field) {
           @if (col.field === 'readStatus') {
             <td class="cell-status">
-              @if (shouldShowStatusIcon(book.readStatus)) {
+              @if (row.showStatusIcon) {
                 <div class="read-status-indicator"
-                     [ngClass]="getReadStatusClass(book.readStatus)"
-                     [pTooltip]="t('statusPrefix') + getReadStatusTooltip(book.readStatus)"
+                     [ngClass]="row.readStatusClass"
+                     [pTooltip]="t('statusPrefix') + row.readStatusTooltip"
                      tooltipPosition="top">
-                  <i [class]="getReadStatusIcon(book.readStatus)"></i>
+                  <i [class]="row.readStatusIcon"></i>
                 </div>
               }
             </td>
@@ -88,27 +88,27 @@
             <td class="cell-rating">
               <span class="rating-wrapper">
                 <p-rating
-                  [(ngModel)]="metadata[col.field]"
+                  [(ngModel)]="row.metadata[col.field]"
                   readonly
                   stars="5"
-                  [style.--p-rating-icon-active-color]="getStarColor(metadata[col.field])"
+                  [style.--p-rating-icon-active-color]="getStarColor(getNumericRating(row.metadata[col.field]))"
                 ></p-rating>
-                @if (metadata[col.field] != null) {
-                  <span>({{ metadata[col.field]?.toFixed(1) }})</span>
+                @if (row.metadata[col.field] != null) {
+                  <span>({{ row.metadata[col.field]?.toFixed(1) }})</span>
                 }
               </span>
             </td>
           } @else {
             <td
-              [title]="getCellValue(metadata, book, col.field)"
+              [title]="row.cellValues[col.field]"
               class="cell-text">
               @if(['title', 'authors', 'publisher', 'seriesName', 'categories', 'language'].includes(col.field)) {
-                @for (item of getCellClickableValue(metadata, book, col.field); track $index; let isLast = $last) {
+                @for (item of row.clickableValues[col.field] ?? []; track $index; let isLast = $last) {
                   <a [routerLink]="item.url" class="cell-link">
                     {{ item.anchor }}</a>@if (!isLast) {<span>, </span>}
                 }
               } @else {
-                {{ getCellValue(metadata, book, col.field) }}
+                {{ row.cellValues[col.field] }}
               }
             </td>
           }
