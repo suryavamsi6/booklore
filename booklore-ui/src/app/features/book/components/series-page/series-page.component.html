@@ -244,7 +244,7 @@
                 </h3>
                 <div class="series-items-grid" #Container
                   [ngStyle]="{'grid-template-columns': 'repeat(auto-fill, minmax(' + gridColumnMinWidth + ', 1fr))'}">
-                  @for (book of books; track book; let i = $index) {
+                  @for (book of books; track book.id; let i = $index) {
                     <div class="grid-item"
                       [ngStyle]="{width: currentCardSize.width + 'px', height: currentCardSize.height + 'px'}">
                       <app-book-card
@@ -253,7 +253,7 @@
                           [isCheckboxEnabled]="true"
                           [isSelected]="selectedBooks.has(book.id)"
                           (checkboxClick)="onCheckboxClicked($event)"
-                          [onBookSelect]="handleBookSelect.bind(this)"
+                          [onBookSelect]="onBookCardSelect"
                           [isSeriesCollapsed]="false"
                           [overlayPreferenceService]="bookCardOverlayPreferenceService">
                       </app-book-card>

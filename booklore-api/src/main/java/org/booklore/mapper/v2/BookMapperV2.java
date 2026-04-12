@@ -36,6 +36,18 @@ public interface BookMapperV2 {
     BookMetadata mapMetadata(BookMetadataEntity metadataEntity);
 
     @AfterMapping
+    default void mapLegacyPrimaryFileFields(BookEntity bookEntity, @MappingTarget Book book) {
+        BookFile primaryFile = book.getPrimaryFile();
+        if (primaryFile == null) {
+            return;
+        }
+
+        book.setFileName(primaryFile.getFileName());
+        book.setFilePath(primaryFile.getFilePath());
+        book.setFileSizeKb(primaryFile.getFileSizeKb());
+    }
+
+    @AfterMapping
     default void mapAudiobookMetadata(BookEntity bookEntity, @MappingTarget Book book) {
         if (book.getMetadata() == null) {
             return;

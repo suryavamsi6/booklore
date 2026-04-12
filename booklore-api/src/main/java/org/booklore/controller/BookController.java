@@ -7,6 +7,7 @@ import org.booklore.model.dto.BookRecommendation;
 import org.booklore.model.dto.BookViewerSettings;
 import org.booklore.model.dto.PagedResponse;
 import org.booklore.model.dto.request.AttachBookFileRequest;
+import org.booklore.model.dto.request.BookBrowserQueryRequest;
 import org.booklore.model.dto.request.CreatePhysicalBookRequest;
 import org.booklore.model.dto.request.DuplicateDetectionRequest;
 import org.booklore.model.dto.request.PersonalRatingUpdateRequest;
@@ -15,11 +16,13 @@ import org.booklore.model.dto.request.ReadStatusUpdateRequest;
 import org.booklore.model.dto.request.ShelvesAssignmentRequest;
 import org.booklore.model.dto.response.AttachBookFileResponse;
 import org.booklore.model.dto.response.BookDeletionResponse;
+import org.booklore.model.dto.response.BookBrowserFacetsResponse;
 import org.booklore.model.dto.response.BookStatusUpdateResponse;
 import org.booklore.model.dto.response.DuplicateGroup;
 import org.booklore.model.dto.response.PersonalRatingUpdateResponse;
 import org.booklore.model.enums.ResetProgressType;
 import org.booklore.service.book.BookFileAttachmentService;
+import org.booklore.service.book.BookBrowserService;
 import org.booklore.service.book.BookService;
 import org.booklore.service.book.BookUpdateService;
 import org.booklore.service.book.DuplicateDetectionService;
@@ -59,6 +62,7 @@ public class BookController {
     private final BookUpdateService bookUpdateService;
     private final BookRecommendationService bookRecommendationService;
     private final BookFileAttachmentService bookFileAttachmentService;
+    private final BookBrowserService bookBrowserService;
     private final BookMetadataService bookMetadataService;
     private final ReadingProgressService readingProgressService;
     private final PhysicalBookService physicalBookService;
@@ -73,6 +77,20 @@ public class BookController {
             @Parameter(description = "Optional library ID to filter books") @RequestParam(required = false) Long libraryId,
             @Parameter(description = "Include book descriptions in the response") @RequestParam(required = false, defaultValue = "false") boolean withDescription) {
         return ResponseEntity.ok(bookService.getPagedBookDTOs(page, size, libraryId, withDescription));
+    }
+
+    @Operation(summary = "Query browser books", description = "Retrieve a paged, browser-ready list of books for the requested scope.")
+    @ApiResponse(responseCode = "200", description = "Paged browser books returned successfully")
+    @PostMapping("/query")
+    public ResponseEntity<PagedResponse<Book>> queryBrowserBooks(@RequestBody BookBrowserQueryRequest request) {
+        return ResponseEntity.ok(bookBrowserService.queryBooks(request));
+    }
+
+    @Operation(summary = "Get browser facets", description = "Retrieve sidebar facet counts for the requested browser scope and active filters.")
+    @ApiResponse(responseCode = "200", description = "Browser facets returned successfully")
+    @PostMapping("/facets")
+    public ResponseEntity<BookBrowserFacetsResponse> getBrowserFacets(@RequestBody BookBrowserQueryRequest request) {
+        return ResponseEntity.ok(bookBrowserService.getFacets(request));
     }
 
     @Operation(summary = "Get all books", description = "Retrieve a list of all books. Optionally include descriptions.")

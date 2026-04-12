@@ -14,7 +14,7 @@
       (load)="onImageLoad()"/>
 
     <div class="top-left-overlay-stack">
-      @if (showBookTypePill && getDisplayFormat(); as displayFormat) {
+      @if (showBookTypePill && displayFormat; as displayFormat) {
         <div class="book-type-pill-overlay" [ngClass]="'book-type-' + displayFormat.toLowerCase()">
           {{ displayFormat }}
         </div>
@@ -39,7 +39,7 @@
     }
 
     @if (!_isSeriesViewActive && hasDigitalFile()) {
-      <a [routerLink]="urlHelper.getBookPrimaryReadingUrl(book)" (click)="readBook(book)"><p-button [rounded]="true" [icon]="readButtonIcon" class="read-btn" (click)="readBook(book)"
+      <a [routerLink]="primaryReadingUrl" (click)="readBook(book)"><p-button [rounded]="true" [icon]="readButtonIcon" class="read-btn" (click)="readBook(book)"
         [pTooltip]="_isContinueReading ? ('book.card.alt.continueReading' | transloco) : ''"
         tooltipPosition="bottom"
         [ariaLabel]="_isContinueReading ? ('book.card.alt.continueReading' | transloco) : (_isAudiobook ? ('book.card.alt.playAudiobook' | transloco) : ('book.card.alt.readBook' | transloco))"></p-button></a>
