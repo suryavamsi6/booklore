@@ -32,11 +32,11 @@
     <div
       class="menu-item-container"
       [class.active-route-container]="isRouteActive"
-      (click)="triggerLink()"
+      (click)="triggerLink($event)"
     >
       @if ((item.routerLink && !item.items)) {
         <a
-          #link
+          #linkRef
           (click)="itemClick($event)"
           [ngClass]="item.class"
           class="menu-item-link"

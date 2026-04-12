@@ -50,7 +50,7 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
   @Input() @HostBinding('class.layout-root-menuitem') root!: boolean;
   @Input() parentKey!: string;
   @Input() menuKey!: string;
-  @ViewChild('linkRef') linkRef!: ElementRef<HTMLAnchorElement>;
+  @ViewChild('linkRef') linkRef?: ElementRef<HTMLAnchorElement>;
 
   hovered = false;
   active = false;
@@ -175,10 +175,23 @@ export class AppMenuitemComponent implements OnInit, OnDestroy {
     }
   }
 
-  triggerLink() {
-    if (this.item.routerLink && !this.item.items && this.linkRef) {
-      this.linkRef.nativeElement.click();
+  triggerLink(event: MouseEvent): void {
+    if (!this.item.routerLink || this.item.items || !this.linkRef) {
+      return;
     }
+
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    // Ignore clicks that already hit an interactive element so we only proxy
+    // clicks from the row/count area into the anchor once.
+    if (target.closest('a, button, [role="button"]')) {
+      return;
+    }
+
+    this.linkRef.nativeElement.click();
   }
 
   formatCount(count: number | null | undefined): string {
