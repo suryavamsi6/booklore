@@ -1,5 +1,4 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {Tab, TabList, TabPanel, TabPanels, Tabs} from 'primeng/tabs';
 import {UserService} from './user-management/user.service';
 import {AsyncPipe} from '@angular/common';
 import {GlobalPreferencesComponent} from './global-preferences/global-preferences.component';
@@ -18,7 +17,7 @@ import {DeviceSettingsComponent} from './device-settings/device-settings-compone
 import {LibraryMetadataSettingsComponent} from './library-metadata-settings/library-metadata-settings.component';
 import {PageTitleService} from "../../shared/service/page-title.service";
 import {EmailV2Component} from './email-v2/email-v2.component';
-import {TranslocoDirective} from '@jsverse/transloco';
+import {TranslocoDirective, TranslocoService} from '@jsverse/transloco';
 import {SystemStatusComponent} from './system-status/system-status.component';
 
 export enum SettingsTab {
@@ -41,11 +40,6 @@ export enum SettingsTab {
 @Component({
   selector: 'app-settings',
   imports: [
-    Tabs,
-    TabList,
-    Tab,
-    TabPanels,
-    TabPanel,
     AsyncPipe,
     GlobalPreferencesComponent,
     UserManagementComponent,
@@ -72,6 +66,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private pageTitle = inject(PageTitleService);
+  private transloco = inject(TranslocoService);
 
   private routeSub!: Subscription;
 
@@ -115,5 +110,47 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
+  }
+
+  getTabLabel(tab: SettingsTab): string {
+    const translationKeyMap: Record<SettingsTab, string> = {
+      [SettingsTab.ReaderSettings]: 'settings.tabs.reader',
+      [SettingsTab.ViewPreferences]: 'settings.tabs.view',
+      [SettingsTab.DeviceSettings]: 'settings.tabs.devices',
+      [SettingsTab.UserManagement]: 'settings.tabs.users',
+      [SettingsTab.EmailSettingsV2]: 'settings.tabs.email',
+      [SettingsTab.NamingPattern]: 'settings.tabs.patterns',
+      [SettingsTab.MetadataSettings]: 'settings.tabs.metadata1',
+      [SettingsTab.LibraryMetadataSettings]: 'settings.tabs.metadata2',
+      [SettingsTab.ApplicationSettings]: 'settings.tabs.application',
+      [SettingsTab.AuthenticationSettings]: 'settings.tabs.authentication',
+      [SettingsTab.OpdsV2]: 'settings.tabs.opds',
+      [SettingsTab.Tasks]: 'settings.tabs.tasks',
+      [SettingsTab.AuditLogs]: 'settings.tabs.auditLogs',
+      [SettingsTab.SystemStatus]: 'settings.tabs.systemStatus'
+    };
+
+    return this.transloco.translate(translationKeyMap[tab]);
+  }
+
+  getTabDescription(tab: SettingsTab): string {
+    const descriptionMap: Record<SettingsTab, string> = {
+      [SettingsTab.ReaderSettings]: 'Reader defaults, fonts, and device-specific reading behavior.',
+      [SettingsTab.ViewPreferences]: 'Layout, filters, and browsing defaults across the app.',
+      [SettingsTab.DeviceSettings]: 'Sync targets and external device integrations.',
+      [SettingsTab.UserManagement]: 'Accounts, permissions, and access boundaries.',
+      [SettingsTab.EmailSettingsV2]: 'Outbound providers, recipients, and delivery settings.',
+      [SettingsTab.NamingPattern]: 'File naming rules for imports, organization, and exports.',
+      [SettingsTab.MetadataSettings]: 'Provider behavior, metadata persistence, and review defaults.',
+      [SettingsTab.LibraryMetadataSettings]: 'Library-specific metadata overrides and source priorities.',
+      [SettingsTab.ApplicationSettings]: 'Global appearance, file handling, and application-wide automation.',
+      [SettingsTab.AuthenticationSettings]: 'OAuth, OIDC, and login security controls.',
+      [SettingsTab.OpdsV2]: 'Catalog publishing and OPDS feed configuration.',
+      [SettingsTab.Tasks]: 'Background jobs, queues, and operational controls.',
+      [SettingsTab.AuditLogs]: 'Recent administrative activity and change history.',
+      [SettingsTab.SystemStatus]: 'Health, storage, and runtime diagnostics.'
+    };
+
+    return descriptionMap[tab];
   }
 }

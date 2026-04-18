@@ -11,7 +11,7 @@ import {Library} from '../../model/library.model';
 import {Shelf} from '../../model/shelf.model';
 import {SortDirection, SortOption} from '../../model/sort.model';
 import {BookState} from '../../model/state/book-state.model';
-import {Book} from '../../model/book.model';
+import {Book, ReadStatus} from '../../model/book.model';
 import {LibraryShelfMenuService} from '../../service/library-shelf-menu.service';
 import {BookTableComponent} from './book-table/book-table.component';
 import {animate, style, transition, trigger} from '@angular/animations';
@@ -160,6 +160,11 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly MOBILE_PADDING = 48;
   private readonly MOBILE_TITLE_BAR_HEIGHT = 32;
   private readonly MOBILE_COLUMNS_STORAGE_KEY = 'mobileColumnsPreference';
+  private readonly quickFilterStatusMap: Record<'reading' | 'unread' | 'finished', ReadStatus[]> = {
+    reading: [ReadStatus.READING, ReadStatus.RE_READING, ReadStatus.PARTIALLY_READ, ReadStatus.PAUSED],
+    unread: [ReadStatus.UNREAD, ReadStatus.UNSET],
+    finished: [ReadStatus.READ]
+  };
   private readonly loadedUserState$ = this.userService.userState$.pipe(
     filter(u => !!u?.user && u.loaded),
     shareReplay({bufferSize: 1, refCount: true})
@@ -297,6 +302,85 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get hasMoreActionsItems(): boolean {
     return this.moreActionsMenuItems!.length > 0;
+  }
+
+  get headerContextLabel(): string {
+    switch (this.entityType) {
+      case EntityType.ALL_BOOKS:
+        return 'Library overview';
+      case EntityType.UNSHELVED:
+        return 'Unsorted arrivals';
+      case EntityType.LIBRARY:
+        return 'Library collection';
+      case EntityType.SHELF:
+        return 'Shelf collection';
+      case EntityType.MAGIC_SHELF:
+        return 'Magic shelf';
+      default:
+        return 'Library overview';
+    }
+  }
+
+  get activeSortLabel(): string {
+    const [primarySort] = this.bookSorter.selectedSortCriteria;
+    return primarySort?.label ?? this.bookSorter.selectedSort?.label ?? 'Recently added';
+  }
+
+  get activeFilterCount(): number {
+    const filters = this.selectedFilter.value;
+    if (!filters) {
+      return 0;
+    }
+
+    return Object.values(filters).reduce((count, values) => count + values.length, 0);
+  }
+
+  getBooksSummary(books: Book[] | null | undefined): { total: number; inProgress: number; unread: number } {
+    const safeBooks = books ?? [];
+    return {
+      total: safeBooks.length,
+      inProgress: safeBooks.filter(book => this.isInProgress(book)).length,
+      unread: safeBooks.filter(book => this.isUnread(book)).length
+    };
+  }
+
+  isQuickFilterActive(preset: 'all' | 'reading' | 'unread' | 'finished'): boolean {
+    const filters = this.selectedFilter.value;
+
+    if (preset === 'all') {
+      return !filters?.['readStatus']?.length;
+    }
+
+    const activeStatuses = filters?.['readStatus'];
+    if (!activeStatuses || Object.keys(filters ?? {}).length !== 1) {
+      return false;
+    }
+
+    const expectedStatuses = this.quickFilterStatusMap[preset];
+    return activeStatuses.length === expectedStatuses.length
+      && expectedStatuses.every(status => activeStatuses.includes(status));
+  }
+
+  applyQuickFilter(preset: 'all' | 'reading' | 'unread' | 'finished'): void {
+    if (preset === 'all') {
+      if (this.bookFilterComponent) {
+        this.bookFilterComponent.clearActiveFilter();
+      } else {
+        this.onFilterSelected(null);
+      }
+      return;
+    }
+
+    const filters = {
+      readStatus: this.quickFilterStatusMap[preset].map(status => status.toString())
+    };
+
+    if (this.bookFilterComponent) {
+      this.bookFilterComponent.setFilters(filters);
+      this.bookFilterComponent.onFiltersChanged();
+    } else {
+      this.onFilterSelected(filters);
+    }
   }
 
   ngOnInit(): void {
@@ -1068,5 +1152,34 @@ export class BookBrowserComponent implements OnInit, AfterViewInit, OnDestroy {
     if (saved !== null && [2, 3, 4].includes(saved)) {
       this.mobileColumnCount = saved;
     }
+  }
+
+  private isUnread(book: Book): boolean {
+    const status = book.readStatus ?? ReadStatus.UNSET;
+    return status === ReadStatus.UNREAD || status === ReadStatus.UNSET || this.getProgressPercentage(book) === 0;
+  }
+
+  private isInProgress(book: Book): boolean {
+    const progress = this.getProgressPercentage(book);
+    const status = book.readStatus;
+
+    if (progress > 0 && progress < 100) {
+      return true;
+    }
+
+    return status === ReadStatus.READING
+      || status === ReadStatus.RE_READING
+      || status === ReadStatus.PARTIALLY_READ
+      || status === ReadStatus.PAUSED;
+  }
+
+  private getProgressPercentage(book: Book): number {
+    return book.epubProgress?.percentage
+      ?? book.pdfProgress?.percentage
+      ?? book.cbxProgress?.percentage
+      ?? book.audiobookProgress?.percentage
+      ?? book.koreaderProgress?.percentage
+      ?? book.koboProgress?.percentage
+      ?? 0;
   }
 }

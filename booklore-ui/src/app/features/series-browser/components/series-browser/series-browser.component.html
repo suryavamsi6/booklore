@@ -12,7 +12,15 @@
 
   @if ((bookState$ | async)?.loaded === true) {
     <div class="browse-header">
-      <h2 class="browse-title">{{ t('browseAllSeries') }}</h2>
+      <div class="browse-headline">
+        <div>
+          <p class="browse-kicker">Collections</p>
+          <h2 class="browse-title">{{ t('browseAllSeries') }}</h2>
+          @if (filteredSeries$ | async; as headerSeriesList) {
+            <p class="browse-subtitle">{{ headerSeriesList.length }} series arranged by progress and volume count</p>
+          }
+        </div>
+      </div>
 
       <div class="browse-controls">
         <div class="search-wrapper">

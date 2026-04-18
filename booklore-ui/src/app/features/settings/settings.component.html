@@ -1,157 +1,168 @@
 <ng-container *transloco="let t; prefix: 'settings.tabs'">
   @if (userService.userState$ | async; as userState) {
     @if (userState.user) {
-      <div class="settings-container">
-        <p-tabs [(value)]="activeTab" lazy scrollable>
-          <p-tablist>
-            <p-tab [value]="SettingsTab.ReaderSettings">
-              <i class="pi pi-book"></i> {{ t('reader') }}
-            </p-tab>
-            <p-tab [value]="SettingsTab.ViewPreferences">
-              <i class="pi pi-desktop"></i> {{ t('view') }}
-            </p-tab>
-            @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
-              <p-tab [value]="SettingsTab.MetadataSettings">
-                <i class="pi pi-sliders-h"></i> {{ t('metadata1') }}
-              </p-tab>
-              <p-tab [value]="SettingsTab.LibraryMetadataSettings">
-                <i class="pi pi-database"></i> {{ t('metadata2') }}
-              </p-tab>
+      <div class="settings-page">
+        <div class="settings-page-hero">
+          <div class="settings-page-copy">
+            <p class="settings-page-kicker">Control center</p>
+            <h1 class="settings-page-title">Settings</h1>
+            <p class="settings-page-description">
+              Tune how Booklore scans, displays, syncs, and protects your library.
+            </p>
+          </div>
+
+          <div class="settings-page-glance">
+            <div class="settings-glance-card">
+              <span class="glance-label">Active section</span>
+              <strong class="glance-value">{{ getTabLabel(activeTab) }}</strong>
+            </div>
+            <div class="settings-glance-card">
+              <span class="glance-label">Access</span>
+              <strong class="glance-value">{{ userState.user.permissions.admin ? 'Administrator' : 'Member' }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-workspace">
+          <aside class="settings-nav">
+            <div class="settings-nav-group">
+              <span class="settings-nav-group-label">Personal</span>
+              <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.ReaderSettings" (click)="activeTab = SettingsTab.ReaderSettings">
+                <i class="pi pi-book"></i>
+                {{ t('reader') }}
+              </button>
+              <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.ViewPreferences" (click)="activeTab = SettingsTab.ViewPreferences">
+                <i class="pi pi-desktop"></i>
+                {{ t('view') }}
+              </button>
+              <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.DeviceSettings" (click)="activeTab = SettingsTab.DeviceSettings">
+                <i class="pi pi-mobile"></i>
+                {{ t('devices') }}
+              </button>
+              <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.EmailSettingsV2" (click)="activeTab = SettingsTab.EmailSettingsV2">
+                <i class="pi pi-envelope"></i>
+                {{ t('email') }}
+              </button>
+              <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.OpdsV2" (click)="activeTab = SettingsTab.OpdsV2">
+                <i class="pi pi-globe"></i>
+                {{ t('opds') }}
+              </button>
+            </div>
+
+            @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig || userState.user.permissions.canManageGlobalPreferences) {
+              <div class="settings-nav-group">
+                <span class="settings-nav-group-label">Library</span>
+                @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.MetadataSettings" (click)="activeTab = SettingsTab.MetadataSettings">
+                    <i class="pi pi-sliders-h"></i>
+                    {{ t('metadata1') }}
+                  </button>
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.LibraryMetadataSettings" (click)="activeTab = SettingsTab.LibraryMetadataSettings">
+                    <i class="pi pi-database"></i>
+                    {{ t('metadata2') }}
+                  </button>
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.NamingPattern" (click)="activeTab = SettingsTab.NamingPattern">
+                    <i class="pi pi-sitemap"></i>
+                    {{ t('patterns') }}
+                  </button>
+                }
+                @if (userState.user.permissions.admin || userState.user.permissions.canManageGlobalPreferences) {
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.ApplicationSettings" (click)="activeTab = SettingsTab.ApplicationSettings">
+                    <i class="pi pi-cog"></i>
+                    {{ t('application') }}
+                  </button>
+                }
+              </div>
             }
-            @if (userState.user.permissions.admin || userState.user.permissions.canManageGlobalPreferences) {
-              <p-tab [value]="SettingsTab.ApplicationSettings">
-                <i class="pi pi-cog"></i> {{ t('application') }}
-              </p-tab>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tab [value]="SettingsTab.UserManagement">
-                <i class="pi pi-users"></i> {{ t('users') }}
-              </p-tab>
-            }
-            <p-tab [value]="SettingsTab.EmailSettingsV2">
-              <i class="pi pi-envelope"></i> {{ t('email') }}
-            </p-tab>
-            @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
-              <p-tab [value]="SettingsTab.NamingPattern">
-                <i class="pi pi-sitemap"></i> {{ t('patterns') }}
-              </p-tab>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tab [value]="SettingsTab.AuthenticationSettings">
-                <i class="pi pi-lock"></i> {{ t('authentication') }}
-              </p-tab>
-            }
+
             @if (userState.user.permissions.admin || userState.user.permissions.canAccessTaskManager) {
-              <p-tab [value]="SettingsTab.Tasks">
-                <i class="pi pi-list-check"></i> {{ t('tasks') }}
-              </p-tab>
+              <div class="settings-nav-group">
+                <span class="settings-nav-group-label">Admin</span>
+                @if (userState.user.permissions.admin) {
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.UserManagement" (click)="activeTab = SettingsTab.UserManagement">
+                    <i class="pi pi-users"></i>
+                    {{ t('users') }}
+                  </button>
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.AuthenticationSettings" (click)="activeTab = SettingsTab.AuthenticationSettings">
+                    <i class="pi pi-lock"></i>
+                    {{ t('authentication') }}
+                  </button>
+                }
+                @if (userState.user.permissions.admin || userState.user.permissions.canAccessTaskManager) {
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.Tasks" (click)="activeTab = SettingsTab.Tasks">
+                    <i class="pi pi-list-check"></i>
+                    {{ t('tasks') }}
+                  </button>
+                }
+                @if (userState.user.permissions.admin) {
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.AuditLogs" (click)="activeTab = SettingsTab.AuditLogs">
+                    <i class="pi pi-history"></i>
+                    {{ t('auditLogs') }}
+                  </button>
+                  <button type="button" class="settings-nav-item" [class.active]="activeTab === SettingsTab.SystemStatus" (click)="activeTab = SettingsTab.SystemStatus">
+                    <i class="pi pi-server"></i>
+                    {{ t('systemStatus') }}
+                  </button>
+                }
+              </div>
             }
-            @if (userState.user.permissions.admin) {
-              <p-tab [value]="SettingsTab.AuditLogs">
-                <i class="pi pi-history"></i> {{ t('auditLogs') }}
-              </p-tab>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tab [value]="SettingsTab.SystemStatus">
-                <i class="pi pi-server"></i> {{ t('systemStatus') }}
-              </p-tab>
-            }
-            <p-tab [value]="SettingsTab.OpdsV2">
-              <i class="pi pi-globe"></i> {{ t('opds') }}
-            </p-tab>
-            <p-tab [value]="SettingsTab.DeviceSettings">
-              <i class="pi pi-mobile"></i> {{ t('devices') }}
-            </p-tab>
-          </p-tablist>
-          <p-tabpanels>
-            <p-tabpanel [value]="SettingsTab.ReaderSettings">
-              <ng-template #content>
-                <app-reader-preferences></app-reader-preferences>
-              </ng-template>
-            </p-tabpanel>
-            <p-tabpanel [value]="SettingsTab.ViewPreferences">
-              <ng-template #content>
-                <app-view-preferences-parent></app-view-preferences-parent>
-              </ng-template>
-            </p-tabpanel>
-            @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
-              <p-tabpanel [value]="SettingsTab.MetadataSettings">
-                <ng-template #content>
+          </aside>
+
+          <section class="settings-content-pane">
+            <div class="settings-content-header">
+              <p class="settings-content-kicker">Now editing</p>
+              <h2 class="settings-content-title">{{ getTabLabel(activeTab) }}</h2>
+              <p class="settings-content-description">{{ getTabDescription(activeTab) }}</p>
+            </div>
+
+            <div class="settings-content-body">
+              @switch (activeTab) {
+                @case (SettingsTab.ReaderSettings) {
+                  <app-reader-preferences></app-reader-preferences>
+                }
+                @case (SettingsTab.ViewPreferences) {
+                  <app-view-preferences-parent></app-view-preferences-parent>
+                }
+                @case (SettingsTab.MetadataSettings) {
                   <app-metadata-settings-component></app-metadata-settings-component>
-                </ng-template>
-              </p-tabpanel>
-              <p-tabpanel [value]="SettingsTab.LibraryMetadataSettings">
-                <ng-template #content>
+                }
+                @case (SettingsTab.LibraryMetadataSettings) {
                   <app-library-metadata-settings-component></app-library-metadata-settings-component>
-                </ng-template>
-              </p-tabpanel>
-            }
-            @if (userState.user.permissions.admin || userState.user.permissions.canManageGlobalPreferences) {
-              <p-tabpanel [value]="SettingsTab.ApplicationSettings">
-                <ng-template #content>
+                }
+                @case (SettingsTab.ApplicationSettings) {
                   <app-global-preferences></app-global-preferences>
-                </ng-template>
-              </p-tabpanel>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tabpanel [value]="SettingsTab.UserManagement">
-                <ng-template #content>
+                }
+                @case (SettingsTab.UserManagement) {
                   <app-user-management></app-user-management>
-                </ng-template>
-              </p-tabpanel>
-            }
-            <p-tabpanel [value]="SettingsTab.EmailSettingsV2">
-              <ng-template #content>
-                <app-email-v2></app-email-v2>
-              </ng-template>
-            </p-tabpanel>
-            @if (userState.user.permissions.admin || userState.user.permissions.canManageMetadataConfig) {
-              <p-tabpanel [value]="SettingsTab.NamingPattern">
-                <ng-template #content>
+                }
+                @case (SettingsTab.EmailSettingsV2) {
+                  <app-email-v2></app-email-v2>
+                }
+                @case (SettingsTab.NamingPattern) {
                   <app-file-naming-pattern></app-file-naming-pattern>
-                </ng-template>
-              </p-tabpanel>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tabpanel [value]="SettingsTab.AuthenticationSettings">
-                <ng-template #content>
+                }
+                @case (SettingsTab.AuthenticationSettings) {
                   <app-authentication-settings></app-authentication-settings>
-                </ng-template>
-              </p-tabpanel>
-            }
-            @if (userState.user.permissions.admin || userState.user.permissions.canAccessTaskManager) {
-              <p-tabpanel [value]="SettingsTab.Tasks">
-                <ng-template #content>
+                }
+                @case (SettingsTab.Tasks) {
                   <app-task-management></app-task-management>
-                </ng-template>
-              </p-tabpanel>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tabpanel [value]="SettingsTab.AuditLogs">
-                <ng-template #content>
+                }
+                @case (SettingsTab.AuditLogs) {
                   <app-audit-logs></app-audit-logs>
-                </ng-template>
-              </p-tabpanel>
-            }
-            @if (userState.user.permissions.admin) {
-              <p-tabpanel [value]="SettingsTab.SystemStatus">
-                <ng-template #content>
+                }
+                @case (SettingsTab.SystemStatus) {
                   <app-system-status></app-system-status>
-                </ng-template>
-              </p-tabpanel>
-            }
-            <p-tabpanel [value]="SettingsTab.OpdsV2">
-              <ng-template #content>
-                <app-opds-settings></app-opds-settings>
-              </ng-template>
-            </p-tabpanel>
-            <p-tabpanel [value]="SettingsTab.DeviceSettings">
-              <ng-template #content>
-                <app-device-settings-component></app-device-settings-component>
-              </ng-template>
-            </p-tabpanel>
-          </p-tabpanels>
-        </p-tabs>
+                }
+                @case (SettingsTab.OpdsV2) {
+                  <app-opds-settings></app-opds-settings>
+                }
+                @case (SettingsTab.DeviceSettings) {
+                  <app-device-settings-component></app-device-settings-component>
+                }
+              }
+            </div>
+          </section>
+        </div>
       </div>
     }
   }
