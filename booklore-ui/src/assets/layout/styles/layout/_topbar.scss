@@ -58,10 +58,10 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border: 0;
+    border: 1px solid transparent;
     width: 36px;
     height: 36px;
-    transition: background 120ms, color 120ms;
+    transition: background 120ms, color 120ms, border-color 120ms;
     border-radius: 8px;
     margin: 0;
     padding: 0;
@@ -73,6 +73,7 @@
     &:hover {
       background: var(--bl-surface);
       color: var(--bl-text);
+      border-color: var(--bl-line-soft);
     }
 
     i, span {
@@ -184,6 +185,101 @@
   width: 1.15rem;
   height: 1.15rem;
   display: inline-block;
+}
+
+/* ---- Command-palette search styling ----
+ * Restyles the topbar's <app-book-searcher> .p-iconfield as a refined pill
+ * search bar matching the prototype: pill radius, soft surface fill, accent
+ * focus glow, and a faux ⌘K kbd hint pinned to the right. The hint is a
+ * pure CSS pseudo-element so we don't have to touch the searcher's HTML. */
+.layout-topbar {
+  .topbar-search {
+    flex: 1;
+    min-width: 0;
+    max-width: 520px;
+
+    .book-searcher-container {
+      width: 100%;
+      max-width: none;
+      margin-left: 0;
+
+      @media (min-width: 768px) {
+        max-width: none;
+      }
+    }
+
+    .p-iconfield {
+      position: relative;
+      width: 100%;
+
+      .p-inputicon {
+        color: var(--bl-text-4);
+        font-size: 0.85rem;
+      }
+
+      input.p-inputtext,
+      .search-input {
+        width: 100%;
+        height: 36px;
+        line-height: 36px;
+        background: var(--bl-bg-2) !important;
+        border: 1px solid var(--bl-line-soft) !important;
+        border-radius: 999px !important;
+        color: var(--bl-text) !important;
+        font-size: 13px !important;
+        padding-left: 2.25rem !important;
+        padding-right: 4rem !important;
+        transition: border-color 140ms, box-shadow 140ms, background 140ms !important;
+
+        &::placeholder {
+          color: var(--bl-text-4);
+        }
+
+        &:hover {
+          border-color: var(--bl-line) !important;
+        }
+
+        &:focus,
+        &:focus-visible {
+          outline: 0 !important;
+          border-color: var(--bl-accent) !important;
+          box-shadow: 0 0 0 3px var(--bl-accent-soft) !important;
+          background: var(--bl-surface) !important;
+        }
+      }
+
+      /* ⌘K hint — only visible on wider screens; hidden when the user is
+       * actively typing (search-iconfield gets .focused / .has-results). */
+      &::after {
+        content: '⌘K';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-family: var(--bl-font-mono);
+        font-size: 10.5px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--bl-text-4);
+        background: var(--bl-bg);
+        border: 1px solid var(--bl-line-soft);
+        border-radius: 5px;
+        padding: 2px 6px;
+        pointer-events: none;
+        line-height: 1;
+        box-shadow: 0 1px 0 oklch(0 0 0 / 0.25);
+      }
+
+      &.focused::after,
+      &.has-results::after {
+        opacity: 0;
+      }
+
+      @media (max-width: 640px) {
+        &::after { display: none; }
+      }
+    }
+  }
 }
 
 @keyframes scalein {
