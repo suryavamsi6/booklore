@@ -1,0 +1,803 @@
+/* Booklore Redesign — Phase 4: remaining surfaces
+ *
+ * Covers everything phases 2 (chrome) and 3 (pages) didn't touch:
+ *   - auth shell (login / setup / change-password) — replaces the
+ *     green-blue gradient with refined-dark + amber accent
+ *   - book card (dashboard + library grid)
+ *   - readers (PDF / EPUB / comic / audiobook) chrome
+ *   - notebook, series browser, author browser + detail
+ *   - library stats, reading stats, metadata manager
+ *   - admin: user management, system status, task management,
+ *     email config, custom fonts
+ *   - readiness-warnings banner on dashboard
+ *   - notification popover + live notification box
+ *
+ * Everything here is additive: targets existing Angular component
+ * selectors from global scope, no component files are edited.
+ */
+
+/* =====================================================================
+ * 1. Auth shell — login, setup, change-password
+ * ===================================================================*/
+app-login,
+app-setup,
+app-change-password {
+
+  .login-container,
+  .setup-container,
+  .change-password-container {
+    background: var(--bl-bg) !important;
+
+    /* Kill the animated blue radial glow. */
+    &::before {
+      background: radial-gradient(
+        ellipse at 30% 10%,
+        var(--bl-accent-soft) 0%,
+        transparent 55%
+      ) !important;
+      animation: none !important;
+      opacity: 0.9;
+    }
+  }
+
+  /* Gradient border around card → soft hairline. */
+  .login-card-border,
+  .setup-card-border,
+  .change-password-card-border {
+    background: var(--bl-line) !important;
+    border-radius: var(--bl-radius-lg) !important;
+    padding: 1px !important;
+    box-shadow: var(--bl-shadow-2) !important;
+
+    &:hover {
+      box-shadow: var(--bl-shadow-2) !important;
+      transform: none !important;
+    }
+  }
+
+  .login-card,
+  .setup-card,
+  .change-password-card {
+    background: var(--bl-surface) !important;
+    backdrop-filter: none !important;
+    border-radius: calc(var(--bl-radius-lg) - 1px) !important;
+    padding: 2.5rem 2.25rem !important;
+
+    @media (max-width: 640px) {
+      padding: 1.75rem 1.25rem !important;
+    }
+  }
+
+  /* Serif title, no gradient text. */
+  .login-title,
+  .setup-title,
+  .change-password-title {
+    font-family: var(--bl-font-serif) !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.015em !important;
+    font-size: 1.85rem !important;
+    color: var(--bl-text) !important;
+    background: none !important;
+    -webkit-text-fill-color: var(--bl-text) !important;
+  }
+
+  .login-subtitle,
+  .setup-subtitle,
+  .change-password-subtitle {
+    color: var(--bl-text-3) !important;
+    font-size: 0.9rem !important;
+  }
+
+  .logo-icon {
+    color: var(--bl-accent) !important;
+    fill: var(--bl-accent) !important;
+    filter: drop-shadow(0 2px 6px oklch(0.82 0.13 75 / 0.25)) !important;
+    animation: none !important;
+  }
+
+  .logo-wrapper { animation: none !important; }
+
+  .form-label {
+    color: var(--bl-text-2) !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+
+    i { color: var(--bl-accent) !important; }
+  }
+
+  .form-input,
+  input.p-inputtext,
+  .p-password input {
+    background: var(--bl-bg-2) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    color: var(--bl-text) !important;
+    border-radius: var(--bl-radius) !important;
+    transition: border-color 140ms, box-shadow 140ms !important;
+
+    &:focus,
+    &:focus-visible {
+      border-color: var(--bl-accent) !important;
+      box-shadow: 0 0 0 3px var(--bl-accent-soft) !important;
+      outline: 0 !important;
+    }
+  }
+
+  /* Primary submit — amber, flat. */
+  .login-button ::ng-deep button,
+  .setup-button ::ng-deep button,
+  .change-password-button ::ng-deep button,
+  button.login-button,
+  p-button.login-button button {
+    background: var(--bl-accent) !important;
+    color: var(--bl-accent-ink) !important;
+    border: 0 !important;
+    border-radius: var(--bl-radius) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.005em !important;
+    box-shadow: 0 1px 0 oklch(1 0 0 / 0.12) inset, 0 2px 8px oklch(0 0 0 / 0.25) !important;
+    transition: background 120ms, transform 120ms !important;
+
+    &:hover:not(:disabled) {
+      background: var(--bl-accent-2) !important;
+      transform: none !important;
+      box-shadow: 0 1px 0 oklch(1 0 0 / 0.18) inset, 0 3px 10px oklch(0 0 0 / 0.35) !important;
+    }
+
+    &:disabled { opacity: 0.55 !important; }
+  }
+
+  .divider {
+    color: var(--bl-text-4) !important;
+
+    &::before,
+    &::after {
+      border-bottom: 1px solid var(--bl-line-soft) !important;
+    }
+
+    span {
+      color: var(--bl-text-4) !important;
+      font-size: 0.7rem !important;
+      letter-spacing: 0.1em !important;
+      text-transform: uppercase !important;
+    }
+  }
+
+  .oidc-button ::ng-deep button {
+    background: var(--bl-bg-2) !important;
+    border: 1px solid var(--bl-line) !important;
+    color: var(--bl-text) !important;
+    border-radius: var(--bl-radius) !important;
+
+    &:hover:not(:disabled) {
+      background: var(--bl-surface-2) !important;
+      border-color: var(--bl-accent) !important;
+      transform: none !important;
+    }
+  }
+
+  .help-text .text-link { color: var(--bl-text-4) !important; }
+  .help-text .text-link.primary { color: var(--bl-accent) !important; }
+
+  .oidc-warning {
+    background: var(--bl-accent-soft) !important;
+    border: 1px solid var(--bl-line) !important;
+    border-radius: var(--bl-radius) !important;
+  }
+  .warning-header { color: var(--bl-accent) !important; }
+  .warning-message { color: var(--bl-text-2) !important; }
+}
+
+/* =====================================================================
+ * 2. Book card — dashboard rows + library grid tile
+ * ===================================================================*/
+app-book-card {
+  .book-card {
+    background: var(--bl-surface) !important;
+    border-radius: var(--bl-radius) !important;
+    box-shadow: var(--bl-shadow-cover) !important;
+    transition: box-shadow 220ms ease, transform 220ms ease !important;
+
+    &:hover { box-shadow: var(--bl-shadow-cover-hover) !important; }
+
+    &.selected {
+      border: 0 !important;
+      outline: 2px solid var(--bl-accent) !important;
+      outline-offset: 2px;
+    }
+  }
+
+  .cover-container {
+    background: var(--bl-bg-2) !important;
+    border-radius: var(--bl-radius) var(--bl-radius) 0 0 !important;
+  }
+
+  .book-cover {
+    border-radius: var(--bl-radius) var(--bl-radius) 0 0 !important;
+  }
+
+  /* Format pill (EPUB / PDF / CBZ / etc.) — compact, mono, uppercase. */
+  .book-type-pill-overlay {
+    font-family: var(--bl-font-mono) !important;
+    font-size: 0.56rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    background: oklch(0 0 0 / 0.65) !important;
+    color: var(--bl-text) !important;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 0 1px oklch(1 0 0 / 0.05);
+  }
+
+  /* Series number + item count pills. */
+  .series-number-overlay,
+  .series-items-count-overlay {
+    background: oklch(0 0 0 / 0.65) !important;
+    color: var(--bl-accent) !important;
+    font-family: var(--bl-font-mono) !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0.04em !important;
+    border-radius: 4px !important;
+  }
+
+  /* Cover progress bar — a thin amber sliver. */
+  .cover-progress-bar-container {
+    background: oklch(0 0 0 / 0.55) !important;
+    height: 3px !important;
+  }
+  .cover-progress-bar {
+    background: var(--bl-accent) !important;
+
+    &.progress-complete { background: var(--bl-jade) !important; }
+  }
+
+  /* Hover icons — info + read. Softer surface, amber focus. */
+  .info-btn,
+  .read-btn {
+    background: oklch(0 0 0 / 0.55) !important;
+    color: var(--bl-text) !important;
+    border: 1px solid oklch(1 0 0 / 0.08) !important;
+    backdrop-filter: blur(6px);
+
+    &:hover {
+      background: var(--bl-accent) !important;
+      color: var(--bl-accent-ink) !important;
+      border-color: var(--bl-accent) !important;
+    }
+  }
+
+  .select-checkbox .p-checkbox-box {
+    border-color: var(--bl-line) !important;
+    background: oklch(0 0 0 / 0.45) !important;
+
+    &.p-highlight {
+      background: var(--bl-accent) !important;
+      border-color: var(--bl-accent) !important;
+    }
+  }
+
+  /* Bottom title bar. */
+  .book-title-container {
+    padding: 8px 10px !important;
+    background: var(--bl-surface) !important;
+    border-top: 1px solid var(--bl-line-soft) !important;
+  }
+  .book-title {
+    font-family: var(--bl-font-ui) !important;
+    font-size: 0.78rem !important;
+    font-weight: 500 !important;
+    color: var(--bl-text) !important;
+    letter-spacing: -0.005em !important;
+  }
+  .read-status-indicator {
+    &.read    { color: var(--bl-jade)   !important; }
+    &.unread  { color: var(--bl-text-4) !important; }
+    &.reading { color: var(--bl-accent) !important; }
+  }
+
+  .menu-button {
+    color: var(--bl-text-3) !important;
+    &:hover { color: var(--bl-text) !important; background: var(--bl-surface-2) !important; }
+  }
+}
+
+/* =====================================================================
+ * 3. Readers — PDF / EPUB / comic / audiobook chrome
+ * ===================================================================*/
+app-pdf-reader,
+app-ebook-reader,
+app-cbx-reader,
+app-audiobook-player {
+  background: var(--bl-bg);
+  color: var(--bl-text);
+
+  /* Top header bar that fades in on hover. */
+  .reader-header,
+  app-reader-header > .reader-header,
+  app-cbx-header > * {
+    background: oklch(0.17 0.008 260 / 0.88) !important;
+    border-bottom: 1px solid var(--bl-line-soft) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 14px oklch(0 0 0 / 0.35) !important;
+    color: var(--bl-text) !important;
+
+    .icon-btn {
+      color: var(--bl-text-2) !important;
+      border-radius: 6px;
+
+      &:hover { color: var(--bl-text) !important; background: oklch(1 0 0 / 0.05); }
+      &.active { color: var(--bl-accent) !important; }
+    }
+  }
+
+  /* Bottom navbar / page indicator / footer. */
+  .reader-footer,
+  .reader-navbar,
+  app-reader-navbar > *,
+  app-reader-footer > *,
+  app-cbx-footer > * {
+    background: oklch(0.17 0.008 260 / 0.88) !important;
+    border-top: 1px solid var(--bl-line-soft) !important;
+    backdrop-filter: blur(12px);
+    color: var(--bl-text-2) !important;
+    font-family: var(--bl-font-mono);
+    font-size: 0.78rem;
+  }
+
+  /* Scrubber / progress slider. */
+  .reader-navbar .p-slider,
+  .reader-footer .p-slider,
+  app-cbx-footer .p-slider {
+    .p-slider-range { background: var(--bl-accent) !important; }
+    .p-slider-handle {
+      background: var(--bl-accent) !important;
+      border: 2px solid var(--bl-bg) !important;
+    }
+  }
+
+  /* Side panels (TOC, notes, bookmarks). */
+  .reader-sidebar,
+  app-reader-sidebar > *,
+  app-reader-left-sidebar > *,
+  app-cbx-sidebar > * {
+    background: var(--bl-surface) !important;
+    border-right: 1px solid var(--bl-line) !important;
+    color: var(--bl-text) !important;
+
+    .sidebar-header,
+    .tab-header,
+    h3 {
+      font-family: var(--bl-font-serif);
+      font-size: 0.95rem;
+      letter-spacing: -0.005em;
+      color: var(--bl-text) !important;
+      border-bottom: 1px solid var(--bl-line-soft);
+    }
+
+    .p-tabview-nav,
+    .tab-strip {
+      background: transparent !important;
+      border-bottom: 1px solid var(--bl-line-soft) !important;
+
+      .p-tabview-nav-link,
+      .tab {
+        color: var(--bl-text-3) !important;
+        font-size: 0.72rem !important;
+        letter-spacing: 0.08em !important;
+        text-transform: uppercase !important;
+        border: 0 !important;
+      }
+
+      .p-highlight .p-tabview-nav-link,
+      .tab.active {
+        color: var(--bl-accent) !important;
+        box-shadow: inset 0 -2px 0 var(--bl-accent) !important;
+      }
+    }
+
+    li, .toc-item, .bookmark-item {
+      color: var(--bl-text-2);
+      border-bottom: 1px solid var(--bl-line-soft);
+
+      &:hover { background: var(--bl-surface-2); color: var(--bl-text); }
+      &.active, &.current {
+        background: var(--bl-accent-soft);
+        color: var(--bl-accent);
+      }
+    }
+  }
+
+  /* Quick settings popover (font size, line height, theme). */
+  app-reader-quick-settings,
+  app-cbx-quick-settings {
+    .quick-settings,
+    > * {
+      background: var(--bl-surface) !important;
+      border: 1px solid var(--bl-line) !important;
+      border-radius: var(--bl-radius) !important;
+      box-shadow: var(--bl-shadow-2) !important;
+
+      label { color: var(--bl-text-3); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    }
+  }
+}
+
+/* Reader book-metadata + note dialogs inherit phase-3 .p-dialog polish. */
+app-settings-dialog,
+app-reader-note-dialog,
+app-reader-book-metadata-dialog {
+  .p-dialog-title { font-family: var(--bl-font-serif); }
+}
+
+/* =====================================================================
+ * 4. Notebook, Series, Author, Stats — sidebar-driven pages
+ * ===================================================================*/
+app-notebook,
+app-series-browser,
+app-author-browser,
+app-author-detail,
+app-library-stats,
+app-user-stats,
+app-metadata-manager {
+  display: block;
+  background: var(--bl-bg);
+  color: var(--bl-text);
+  min-height: calc(100dvh - var(--bl-topbar-h));
+
+  /* Page heading — serif, with uppercase kicker where present. */
+  h1, h2, .page-title {
+    font-family: var(--bl-font-serif) !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.015em !important;
+    color: var(--bl-text) !important;
+  }
+  h3, h4 {
+    color: var(--bl-text-2);
+    font-weight: 600;
+  }
+  h5, h6,
+  .section-label,
+  .eyebrow {
+    color: var(--bl-text-3);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Containers / cards. */
+  .card,
+  .panel,
+  .stats-card,
+  .chart-card,
+  .note-card,
+  .author-card,
+  .series-card {
+    background: var(--bl-surface) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    border-radius: var(--bl-radius) !important;
+    box-shadow: var(--bl-shadow-1);
+  }
+
+  /* Tables. */
+  table, .p-datatable {
+    background: transparent;
+
+    thead th,
+    .p-datatable-thead > tr > th {
+      background: var(--bl-bg-2) !important;
+      color: var(--bl-text-3) !important;
+      font-size: 0.7rem !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      border-color: var(--bl-line) !important;
+    }
+    tbody tr,
+    .p-datatable-tbody > tr {
+      background: transparent !important;
+      color: var(--bl-text) !important;
+      border-bottom: 1px solid var(--bl-line-soft) !important;
+
+      &:hover { background: var(--bl-surface-2) !important; }
+      > td { border-color: var(--bl-line-soft) !important; }
+    }
+  }
+
+  /* Empty states. */
+  .empty-state,
+  .no-content {
+    color: var(--bl-text-3);
+    font-style: normal;
+    text-align: center;
+    padding: 3rem 1rem;
+
+    i, .empty-icon {
+      color: var(--bl-accent);
+      font-size: 1.75rem;
+      opacity: 0.75;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+  }
+}
+
+/* Author grid tiles — borrow the book-card treatment. */
+app-author-browser {
+  .author-tile,
+  .author-card {
+    background: var(--bl-surface) !important;
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+    transition: transform 180ms, border-color 180ms;
+
+    &:hover {
+      border-color: var(--bl-line);
+      transform: translateY(-2px);
+    }
+
+    .author-name {
+      font-family: var(--bl-font-serif);
+      font-weight: 500;
+      color: var(--bl-text);
+    }
+    .book-count {
+      color: var(--bl-text-3);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+    }
+  }
+}
+
+/* Stats dashboards — chart cards pop on surface-2. */
+app-library-stats,
+app-user-stats {
+  .kpi-card,
+  .stat-card,
+  .metric-card {
+    background: var(--bl-surface-2) !important;
+
+    .kpi-label,
+    .stat-label {
+      color: var(--bl-text-3);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .kpi-value,
+    .stat-value {
+      font-family: var(--bl-font-serif);
+      font-size: 2rem;
+      font-weight: 500;
+      color: var(--bl-text);
+      letter-spacing: -0.02em;
+    }
+  }
+}
+
+/* =====================================================================
+ * 5. Admin — user management, system status, email, custom fonts
+ * ===================================================================*/
+app-user-management,
+app-system-status,
+app-task-management,
+app-email-v2,
+app-custom-fonts,
+app-user-profile-dialog {
+  color: var(--bl-text);
+
+  .section-title,
+  h2, h3 {
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--bl-text);
+  }
+
+  .admin-card,
+  .user-row,
+  .status-card,
+  .task-row {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+    padding: 1rem 1.25rem;
+  }
+
+  /* Role / permission chips. */
+  .role-chip,
+  .perm-chip,
+  .status-chip,
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: var(--bl-surface-2);
+    color: var(--bl-text-2);
+    border: 1px solid var(--bl-line-soft);
+
+    &.admin, &.role-admin { background: var(--bl-accent-soft); color: var(--bl-accent); border-color: transparent; }
+    &.healthy, &.ok, &.success { background: var(--bl-jade-soft); color: var(--bl-jade); border-color: transparent; }
+    &.warn, &.warning { background: var(--bl-accent-soft); color: var(--bl-accent); border-color: transparent; }
+    &.error, &.danger, &.failed { background: oklch(0.72 0.12 20 / 0.14); color: var(--bl-rose); border-color: transparent; }
+  }
+
+  /* Monospace filenames, task IDs, log lines. */
+  .mono,
+  .filename,
+  .task-id,
+  code {
+    font-family: var(--bl-font-mono);
+    font-size: 0.82em;
+    color: var(--bl-text-2);
+  }
+}
+
+app-system-status {
+  .status-indicator,
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    background: var(--bl-jade);
+    box-shadow: 0 0 0 4px var(--bl-jade-soft);
+
+    &.warn  { background: var(--bl-accent); box-shadow: 0 0 0 4px var(--bl-accent-soft); }
+    &.error { background: var(--bl-rose);   box-shadow: 0 0 0 4px oklch(0.72 0.12 20 / 0.14); }
+  }
+}
+
+/* =====================================================================
+ * 6. Dashboard readiness-warnings banner
+ * ===================================================================*/
+app-main-dashboard {
+  .readiness-warnings {
+    padding: 14px 28px 0 !important;
+
+    p-message .p-message {
+      border: 1px solid var(--bl-line) !important;
+      border-radius: var(--bl-radius) !important;
+      background: var(--bl-surface-2) !important;
+
+      &.p-message-warn {
+        border-color: var(--bl-accent) !important;
+        background: var(--bl-accent-soft) !important;
+        color: var(--bl-accent) !important;
+      }
+    }
+
+    .readiness-warnings-actions {
+      padding: 4px 0 0;
+    }
+  }
+}
+
+/* =====================================================================
+ * 7. Notifications & popovers
+ * ===================================================================*/
+app-unified-notification-popover-component,
+app-live-notification-box {
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font-family: var(--bl-font-ui);
+
+  .notification-title,
+  .header {
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    color: var(--bl-text);
+    letter-spacing: -0.005em;
+  }
+
+  .notification-item,
+  .task-item {
+    border-bottom: 1px solid var(--bl-line-soft);
+    padding: 10px 12px;
+
+    &:hover { background: var(--bl-surface-2); }
+
+    .timestamp,
+    .task-meta {
+      color: var(--bl-text-4);
+      font-family: var(--bl-font-mono);
+      font-size: 0.7rem;
+    }
+  }
+}
+
+.notification-badge {
+  background: var(--bl-accent) !important;
+  color: var(--bl-accent-ink) !important;
+  font-family: var(--bl-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* =====================================================================
+ * 8. Modals / dialogs — extend phase 3's .p-dialog polish
+ * ===================================================================*/
+.p-dialog {
+  app-metadata-picker,
+  app-cover-search,
+  app-book-searcher,
+  app-duplicate-merger,
+  app-shelf-assigner,
+  app-shelf-edit-dialog,
+  app-shelf-creator,
+  app-library-creator,
+  app-add-physical-book-dialog,
+  app-book-file-attacher,
+  app-book-reviews,
+  app-directory-picker-v2,
+  app-bookdrop-bulk-edit-dialog,
+  app-dashboard-settings {
+    color: var(--bl-text);
+
+    h2, h3, .title {
+      font-family: var(--bl-font-serif);
+      font-weight: 500;
+      color: var(--bl-text);
+    }
+
+    .field-label, label {
+      color: var(--bl-text-3);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .preview-thumb,
+    .cover-thumb {
+      border: 1px solid var(--bl-line-soft);
+      border-radius: 4px;
+      box-shadow: var(--bl-shadow-1);
+    }
+  }
+}
+
+/* Notifications toast. */
+.p-toast .p-toast-message {
+  background: var(--bl-surface) !important;
+  border: 1px solid var(--bl-line) !important;
+  border-radius: var(--bl-radius) !important;
+  backdrop-filter: blur(8px);
+  color: var(--bl-text) !important;
+
+  &.p-toast-message-success { border-left: 3px solid var(--bl-jade) !important; }
+  &.p-toast-message-warn    { border-left: 3px solid var(--bl-accent) !important; }
+  &.p-toast-message-error   { border-left: 3px solid var(--bl-rose) !important; }
+  &.p-toast-message-info    { border-left: 3px solid var(--bl-sky) !important; }
+}
+
+/* =====================================================================
+ * 9. Global PrimeNG accents that weren't fully caught by phases 1-3
+ * ===================================================================*/
+.p-button.p-button-success,
+p-button[severity="success"] > button {
+  background: var(--bl-jade) !important;
+  border-color: var(--bl-jade) !important;
+  color: oklch(0.18 0.03 165) !important;
+}
+.p-button.p-button-danger,
+p-button[severity="danger"] > button {
+  background: var(--bl-rose) !important;
+  border-color: var(--bl-rose) !important;
+  color: oklch(0.16 0.02 20) !important;
+}
+
+/* EPUB badge elsewhere in app — keep saturated but use refined-dark frame. */
+.p-tag.p-tag-success { background: var(--bl-jade-soft); color: var(--bl-jade); border: 1px solid transparent; }
+.p-tag.p-tag-warning { background: var(--bl-accent-soft); color: var(--bl-accent); border: 1px solid transparent; }
+.p-tag.p-tag-danger  { background: oklch(0.72 0.12 20 / 0.14); color: var(--bl-rose); border: 1px solid transparent; }
+.p-tag.p-tag-info    { background: oklch(0.72 0.12 230 / 0.14); color: var(--bl-sky); border: 1px solid transparent; }

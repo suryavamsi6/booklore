@@ -6,6 +6,7 @@
 @include meta.load-css("assets/layout/styles/global.scss");
 @include meta.load-css("assets/styles/_booklore-chrome.scss");
 @include meta.load-css("assets/styles/_booklore-pages.scss");
+@include meta.load-css("assets/styles/_booklore-surfaces.scss");
 
 html {
   font-family: var(--bl-font-ui);
