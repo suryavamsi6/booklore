@@ -62,6 +62,8 @@
               </p-button>
             </div>
 
+            <app-dashboard-hero></app-dashboard-hero>
+
             @if (dashboardConfig$ | async; as config) {
               @for (scroller of config.scrollers; track scroller.id) {
                 @if (scroller.enabled) {
