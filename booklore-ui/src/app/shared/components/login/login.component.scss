@@ -1,169 +1,361 @@
-@use '../../styles/auth-shared' as auth;
+/* Booklore Redesign — Split login layout
+ * Left: visual branding panel with gradient + floating elements
+ * Right: form card centered in the panel
+ */
 
 .login-container {
-  @include auth.auth-container;
-}
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
+  width: 100vw;
+  background: var(--bl-bg);
+  overflow: hidden;
 
-.login-card-wrapper {
-  @include auth.auth-card-wrapper(460px, -8rem);
-}
-
-.login-card-border {
-  @include auth.auth-card-border;
-}
-
-.login-card {
-  @include auth.auth-card;
-}
-
-.login-header {
-  @include auth.auth-header;
-}
-
-.logo-wrapper {
-  @include auth.auth-logo;
-}
-
-.logo-icon {
-  @include auth.auth-logo-icon;
-}
-
-.login-title {
-  @include auth.auth-title;
-}
-
-.login-subtitle {
-  @include auth.auth-subtitle;
-  font-size: 1rem;
-}
-
-.oidc-warning {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  animation: fadeIn 0.3s ease-out;
-}
-
-.warning-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.warning-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #fbbf24;
-  font-size: 0.875rem;
-  font-weight: 600;
-
-  i {
-    font-size: 1rem;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 }
 
-.warning-message {
-  font-size: 0.875rem;
-  color: #fcd34d;
-  line-height: 1.5;
+/* ---- Left visual panel ---- */
+.login-visual {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--bl-line-soft);
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.visual-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 40%, oklch(0.35 0.10 75 / 0.55), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, oklch(0.30 0.10 260 / 0.45), transparent 55%);
+  pointer-events: none;
+}
+
+/* Decorative floating "books" — stylised spines arranged in a tilted grid.
+ * Pure CSS, no data required. The colors rotate through the design palette. */
+.visual-floaters {
+  position: absolute;
+  inset: -10% -5%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  padding: 48px;
+  transform: rotate(-8deg);
+  opacity: 0.32;
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+.visual-floater {
+  aspect-ratio: 2 / 3;
+  border-radius: 6px;
+  position: relative;
+  box-shadow: 0 12px 30px oklch(0 0 0 / 0.5),
+              inset 0 1px 0 oklch(1 0 0 / 0.08);
+  background: linear-gradient(
+    150deg,
+    oklch(0.40 0.05 var(--bl-floater-hue, 80)),
+    oklch(0.22 0.04 var(--bl-floater-hue, 80))
+  );
+  animation-name: bl-floater-bob;
+  animation-duration: 16s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+
+  /* Spine highlight to suggest a book edge. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 6px;
+    background: linear-gradient(90deg, oklch(0 0 0 / 0.55), oklch(0 0 0 / 0) 70%);
+    border-radius: 6px 0 0 6px;
+  }
+
+  /* A faint serif "title" band. */
+  &::after {
+    content: '';
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    top: 38%;
+    height: 2px;
+    background: oklch(1 0 0 / 0.18);
+    border-radius: 1px;
+    box-shadow: 0 6px 0 oklch(1 0 0 / 0.10),
+                0 12px 0 oklch(1 0 0 / 0.06);
+  }
+}
+
+@keyframes bl-floater-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visual-floater { animation: none; }
+}
+
+.visual-content {
+  position: relative;
+  z-index: 2;
+  padding: 48px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.visual-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  filter: drop-shadow(0 2px 6px oklch(0 0 0 / 0.3));
+}
+
+.brand-name {
+  font-family: var(--bl-font-serif);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--bl-text);
+}
+
+.visual-hero {
+  margin-top: auto;
+  max-width: 480px;
+}
+
+.visual-headline {
+  font-family: var(--bl-font-serif);
+  font-size: 48px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 18px;
+  color: var(--bl-text);
+}
+
+.visual-description {
+  color: var(--bl-text-2);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 420px;
   margin: 0;
 }
 
-.warning-actions {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: center;
+/* ---- Right form panel ---- */
+.login-form-panel {
+  display: grid;
+  place-items: center;
+  padding: 48px;
+  position: relative;
+  background: var(--bl-bg);
+
+  @media (max-width: 900px) {
+    min-height: 100vh;
+    padding: 24px;
+  }
+}
+
+.login-card-border {
+  width: 100%;
+  max-width: 400px;
+  border-radius: var(--bl-radius-lg);
+  padding: 1px;
+  background: var(--bl-line);
+  box-shadow: var(--bl-shadow-2);
+}
+
+.login-card {
+  width: 100%;
+  background: var(--bl-surface);
+  border-radius: calc(var(--bl-radius-lg) - 1px);
+  padding: 2.5rem 2.25rem;
+
+  @media (max-width: 640px) {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.mobile-only {
+  @media (min-width: 901px) {
+    display: none;
+  }
+}
+
+.logo-wrapper {
+  margin-bottom: 1.25rem;
+}
+
+.logo-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  margin: 0 auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px oklch(0.82 0.13 75 / 0.25));
+}
+
+.login-title {
+  font-family: var(--bl-font-serif) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.015em !important;
+  font-size: 1.85rem !important;
+  color: var(--bl-text) !important;
+  background: none !important;
+  -webkit-text-fill-color: var(--bl-text) !important;
+  margin: 0 0 0.5rem;
+}
+
+.login-subtitle {
+  color: var(--bl-text-3) !important;
+  font-size: 0.9rem !important;
+  margin: 0;
 }
 
 .login-form {
-  @include auth.auth-form(1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .form-field {
-  @include auth.form-field;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .form-label {
-  @include auth.form-label;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bl-text-2);
+
+  i {
+    color: var(--bl-accent);
+    font-size: 0.8rem;
+  }
 }
 
 .form-input {
-  @include auth.form-input;
+  background: var(--bl-bg-2) !important;
+  border: 1px solid var(--bl-line-soft) !important;
+  color: var(--bl-text) !important;
+  border-radius: var(--bl-radius) !important;
+  transition: border-color 140ms, box-shadow 140ms !important;
+
+  &:focus,
+  &:focus-visible {
+    border-color: var(--bl-accent) !important;
+    box-shadow: 0 0 0 3px var(--bl-accent-soft) !important;
+    outline: 0 !important;
+  }
 }
 
 .login-button {
-  @include auth.auth-button;
   margin-top: 0.5rem;
+
+  ::ng-deep button {
+    background: var(--bl-accent) !important;
+    color: var(--bl-accent-ink) !important;
+    border: 0 !important;
+    border-radius: var(--bl-radius) !important;
+    font-weight: 600 !important;
+    height: 2.75rem;
+    box-shadow: 0 1px 0 oklch(1 0 0 / 0.12) inset, 0 2px 8px oklch(0 0 0 / 0.25) !important;
+    transition: background 120ms !important;
+
+    &:hover:not(:disabled) {
+      background: var(--bl-accent-2) !important;
+    }
+
+    &:disabled {
+      opacity: 0.55 !important;
+    }
+  }
 }
 
 .error-message {
-  @include auth.error-message;
+  animation: shake 0.4s ease-in-out;
 }
 
 .divider {
   display: flex;
   align-items: center;
   text-align: center;
-  margin: 1.5rem 0;
+  margin: 1.25rem 0;
+  color: var(--bl-text-4);
 
   &::before,
   &::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid var(--bl-line-soft);
   }
 
   span {
-    padding: 0 1rem;
-    font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-weight: 500;
+    padding: 0 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bl-text-4);
   }
 }
 
 .oidc-button {
   ::ng-deep button {
-    height: 2.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
+    height: 2.5rem;
+    background: var(--bl-bg-2) !important;
+    border: 1px solid var(--bl-line) !important;
+    color: var(--bl-text) !important;
+    border-radius: var(--bl-radius) !important;
+    transition: background 120ms, border-color 120ms !important;
 
     &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-1px);
+      background: var(--bl-surface-2) !important;
+      border-color: var(--bl-accent) !important;
     }
   }
 }
 
-.help-text {
+.login-footer-text {
   text-align: center;
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
 }
 
-.text-link {
-  background: none;
-  border: none;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
-  text-decoration: underline;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  padding: 0;
+.login-version {
+  font-family: var(--bl-font-mono);
+  font-size: 0.7rem;
+  color: var(--bl-text-4);
+}
 
-  &:hover {
-    color: rgba(255, 255, 255, 0.8);
-  }
+.help-text .text-link {
+  color: var(--bl-text-4) !important;
+  &.primary { color: var(--bl-accent) !important; }
+}
 
-  &.primary {
-    color: var(--primary-color);
-
-    &:hover {
-      color: #60a5fa;
-    }
-  }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
 }

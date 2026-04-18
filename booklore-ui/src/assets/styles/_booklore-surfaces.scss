@@ -19,16 +19,15 @@
 /* =====================================================================
  * 1. Auth shell — login, setup, change-password
  * ===================================================================*/
-app-login,
+/* Login styles are now in the component's own SCSS file (split layout).
+ * Setup + change-password still use the centered card approach. */
 app-setup,
 app-change-password {
 
-  .login-container,
   .setup-container,
   .change-password-container {
     background: var(--bl-bg) !important;
 
-    /* Kill the animated blue radial glow. */
     &::before {
       background: radial-gradient(
         ellipse at 30% 10%,
@@ -40,8 +39,6 @@ app-change-password {
     }
   }
 
-  /* Gradient border around card → soft hairline. */
-  .login-card-border,
   .setup-card-border,
   .change-password-card-border {
     background: var(--bl-line) !important;
@@ -55,7 +52,6 @@ app-change-password {
     }
   }
 
-  .login-card,
   .setup-card,
   .change-password-card {
     background: var(--bl-surface) !important;
@@ -68,8 +64,6 @@ app-change-password {
     }
   }
 
-  /* Serif title, no gradient text. */
-  .login-title,
   .setup-title,
   .change-password-title {
     font-family: var(--bl-font-serif) !important;
@@ -81,7 +75,6 @@ app-change-password {
     -webkit-text-fill-color: var(--bl-text) !important;
   }
 
-  .login-subtitle,
   .setup-subtitle,
   .change-password-subtitle {
     color: var(--bl-text-3) !important;
@@ -124,61 +117,22 @@ app-change-password {
     }
   }
 
-  /* Primary submit — amber, flat. */
-  .login-button ::ng-deep button,
   .setup-button ::ng-deep button,
-  .change-password-button ::ng-deep button,
-  button.login-button,
-  p-button.login-button button {
+  .change-password-button ::ng-deep button {
     background: var(--bl-accent) !important;
     color: var(--bl-accent-ink) !important;
     border: 0 !important;
     border-radius: var(--bl-radius) !important;
     font-weight: 600 !important;
-    letter-spacing: 0.005em !important;
     box-shadow: 0 1px 0 oklch(1 0 0 / 0.12) inset, 0 2px 8px oklch(0 0 0 / 0.25) !important;
-    transition: background 120ms, transform 120ms !important;
 
     &:hover:not(:disabled) {
       background: var(--bl-accent-2) !important;
       transform: none !important;
-      box-shadow: 0 1px 0 oklch(1 0 0 / 0.18) inset, 0 3px 10px oklch(0 0 0 / 0.35) !important;
     }
 
     &:disabled { opacity: 0.55 !important; }
   }
-
-  .divider {
-    color: var(--bl-text-4) !important;
-
-    &::before,
-    &::after {
-      border-bottom: 1px solid var(--bl-line-soft) !important;
-    }
-
-    span {
-      color: var(--bl-text-4) !important;
-      font-size: 0.7rem !important;
-      letter-spacing: 0.1em !important;
-      text-transform: uppercase !important;
-    }
-  }
-
-  .oidc-button ::ng-deep button {
-    background: var(--bl-bg-2) !important;
-    border: 1px solid var(--bl-line) !important;
-    color: var(--bl-text) !important;
-    border-radius: var(--bl-radius) !important;
-
-    &:hover:not(:disabled) {
-      background: var(--bl-surface-2) !important;
-      border-color: var(--bl-accent) !important;
-      transform: none !important;
-    }
-  }
-
-  .help-text .text-link { color: var(--bl-text-4) !important; }
-  .help-text .text-link.primary { color: var(--bl-accent) !important; }
 
   .oidc-warning {
     background: var(--bl-accent-soft) !important;
@@ -187,6 +141,26 @@ app-change-password {
   }
   .warning-header { color: var(--bl-accent) !important; }
   .warning-message { color: var(--bl-text-2) !important; }
+}
+
+/* Shared auth form token overrides for setup + change-password */
+app-login,
+app-setup,
+app-change-password {
+  input.p-inputtext,
+  .p-password input {
+    background: var(--bl-bg-2) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    color: var(--bl-text) !important;
+    border-radius: var(--bl-radius) !important;
+
+    &:focus,
+    &:focus-visible {
+      border-color: var(--bl-accent) !important;
+      box-shadow: 0 0 0 3px var(--bl-accent-soft) !important;
+      outline: 0 !important;
+    }
+  }
 }
 
 /* =====================================================================
@@ -551,9 +525,112 @@ app-author-browser {
   }
 }
 
-/* Stats dashboards — chart cards pop on surface-2. */
+/* Stats dashboards — refined-dark chart cards + KPI treatments. */
 app-library-stats,
 app-user-stats {
+  .library-stats-container,
+  .user-stats-container {
+    background: var(--bl-bg) !important;
+  }
+
+  /* Header card (library filter + totals / user greeting row). */
+  .header-card,
+  .header-section {
+    background: var(--bl-surface) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    border-radius: var(--bl-radius) !important;
+    backdrop-filter: none !important;
+    box-shadow: var(--bl-shadow-1) !important;
+
+    &:hover {
+      border-color: var(--bl-line) !important;
+      box-shadow: var(--bl-shadow-1) !important;
+    }
+  }
+
+  /* User greeting heading → serif. */
+  .greeting h2 {
+    font-family: var(--bl-font-serif) !important;
+    font-weight: 500 !important;
+    letter-spacing: -0.015em !important;
+    color: var(--bl-text) !important;
+    i { color: var(--bl-accent) !important; }
+  }
+  .greeting i { color: var(--bl-accent) !important; }
+
+  /* Library totals row — each metric becomes a mini KPI tile. */
+  .library-totals {
+    color: var(--bl-text-2) !important;
+  }
+  .total-item {
+    background: var(--bl-surface-2) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    border-radius: var(--bl-radius) !important;
+    padding: 0.5rem 0.75rem !important;
+
+    i { color: var(--bl-accent) !important; }
+
+    .total-label {
+      color: var(--bl-text-3) !important;
+      font-size: 0.68rem !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      font-weight: 600 !important;
+    }
+    .total-value {
+      font-family: var(--bl-font-serif) !important;
+      font-weight: 500 !important;
+      color: var(--bl-text) !important;
+      letter-spacing: -0.015em !important;
+    }
+  }
+
+  /* Chart cards — grid tiles with subtle hairline + serif headings. */
+  .chart-card {
+    background: var(--bl-surface) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    border-radius: var(--bl-radius) !important;
+    box-shadow: var(--bl-shadow-1) !important;
+
+    h2, h3, .chart-title {
+      font-family: var(--bl-font-serif) !important;
+      font-weight: 500 !important;
+      letter-spacing: -0.01em !important;
+      color: var(--bl-text) !important;
+    }
+  }
+  .chart-drag-handle {
+    color: var(--bl-text-4) !important;
+    &:hover { color: var(--bl-text-2) !important; }
+  }
+
+  /* Config toggle + buttons. */
+  .config-toggle-btn {
+    background: var(--bl-surface-2) !important;
+    border: 1px solid var(--bl-line-soft) !important;
+    color: var(--bl-text-2) !important;
+    border-radius: var(--bl-radius-sm) !important;
+
+    &:hover {
+      background: var(--bl-surface-hi) !important;
+      color: var(--bl-text) !important;
+      border-color: var(--bl-line) !important;
+    }
+  }
+
+  /* Config modal overlay (library-stats) + dialog (user-stats). */
+  .config-modal {
+    background: var(--bl-surface) !important;
+    border: 1px solid var(--bl-line) !important;
+    border-radius: var(--bl-radius-lg) !important;
+  }
+  .config-modal-header h3,
+  .config-dialog h3 {
+    font-family: var(--bl-font-serif) !important;
+    color: var(--bl-text) !important;
+  }
+
+  /* Legacy kpi/stat tiles (used by phase 3 fallback rules). */
   .kpi-card,
   .stat-card,
   .metric-card {
