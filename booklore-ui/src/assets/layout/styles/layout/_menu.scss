@@ -48,6 +48,14 @@
   }
 
   .layout-root-menuitem {
+    /* Section spacing: each root group reads as its own card; first group
+     * sits flush, later groups get a top divider line for visual rhythm. */
+    & + .layout-root-menuitem {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--bl-line-soft);
+    }
+
     > .layout-menuitem-root-text {
       font-family: var(--bl-font-ui);
       font-size: 10px;
@@ -117,6 +125,12 @@
       &.active-route {
         font-weight: 500;
         color: var(--bl-text);
+        background: var(--bl-surface);
+
+        .layout-menuitem-icon,
+        > i {
+          color: var(--bl-accent);
+        }
       }
 
       &:hover {
@@ -126,6 +140,32 @@
 
       &:focus {
         @include mixins.focused-inset();
+      }
+    }
+
+    /* ---- Active-route indicator: 3px amber left bar ----
+     * Mirrors the prototype's .nav-item.active::before — a short, rounded
+     * amber rule bleeds out of the sidebar's left padding so the active row
+     * reads as "currently selected" at a glance. Applied at the container
+     * level since .menu-item-container wraps the link + end content. */
+    .menu-item-container {
+      position: relative;
+      border-radius: 8px;
+
+      &.active-route-container {
+        background: var(--bl-surface);
+
+        &::before {
+          content: '';
+          position: absolute;
+          left: -12px;
+          top: 8px;
+          bottom: 8px;
+          width: 3px;
+          background: var(--bl-accent);
+          border-radius: 0 3px 3px 0;
+          box-shadow: 0 0 0 1px oklch(0 0 0 / 0.25);
+        }
       }
     }
 
