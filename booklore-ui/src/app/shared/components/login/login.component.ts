@@ -36,6 +36,15 @@ export class LoginComponent implements OnInit {
   showLocalLogin = true;
   private oidcOnlyAutoRedirect = false;
 
+  // Decorative floating "books" on the left visual panel — indices plus
+  // precomputed animation timings so the SCSS stays free of calc() tricks.
+  readonly floaters = Array.from({ length: 16 }, (_, i) => ({
+    i,
+    duration: `${14 + (i % 5) * 2}s`,
+    delay: `${i * 0.3}s`,
+    hue: 60 + (i * 24) % 360,
+  }));
+
   private authService = inject(AuthService);
   private oidcService = inject(OidcService);
   private appSettingsService = inject(AppSettingsService);
