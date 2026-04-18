@@ -3,49 +3,51 @@
   <div class="book-browser-main">
 
     <div class="book-browser-header">
-      <div class="entity-info-wrapper">
-        @if (entityType$ | async; as entityType) {
-          <div class="entity-info">
-            <p class="entity-title">
-              @if (entityType === EntityType.ALL_BOOKS) {
-                @if (currentFilterLabel && rawFilterParamFromUrl) {
-                  {{ currentFilterLabel }}
-                } @else if (isFilterActive || hasSearchTerm) {
-                  {{ computedFilterLabel }}
+      <div class="book-browser-header-main">
+        <div class="entity-info-wrapper">
+          @if (entityType$ | async; as entityType) {
+            <div class="entity-info">
+              <p class="entity-context-label">{{ headerContextLabel }}</p>
+              <p class="entity-title">
+                @if (entityType === EntityType.ALL_BOOKS) {
+                  @if (currentFilterLabel && rawFilterParamFromUrl) {
+                    {{ currentFilterLabel }}
+                  } @else if (isFilterActive || hasSearchTerm) {
+                    {{ computedFilterLabel }}
+                  } @else {
+                    {{ t('labels.allBooks') }}
+                  }
+                } @else if (entityType === EntityType.UNSHELVED) {
+                  {{ (isFilterActive || hasSearchTerm) ? t('labels.unshelvedBooksFiltered') : t('labels.unshelvedBooks') }}
                 } @else {
-                  {{ t('labels.allBooks') }}
+                  {{ entityType }}: {{ (entity$ | async)?.name }}{{ (isFilterActive || hasSearchTerm) ? ' ' + t('labels.filteredSuffix') : '' }}
                 }
-              } @else if (entityType === EntityType.UNSHELVED) {
-                {{ (isFilterActive || hasSearchTerm) ? t('labels.unshelvedBooksFiltered') : t('labels.unshelvedBooks') }}
-              } @else {
-                {{ entityType }}: {{ (entity$ | async)?.name }}{{ (isFilterActive || hasSearchTerm) ? ' ' + t('labels.filteredSuffix') : '' }}
-              }
-            </p>
-            @if (seriesCollapseFilter.isSeriesCollapsed && (bookState$ | async)?.books; as books) {
-              <p class="series-collapsed-info">
-                {{ t('labels.seriesCollapsedInfo', { count: books.length, itemWord: books.length === 1 ? t('labels.item') : t('labels.items') }) }}
               </p>
-            }
-          </div>
+              @if (seriesCollapseFilter.isSeriesCollapsed && (bookState$ | async)?.books; as books) {
+                <p class="series-collapsed-info">
+                  {{ t('labels.seriesCollapsedInfo', { count: books.length, itemWord: books.length === 1 ? t('labels.item') : t('labels.items') }) }}
+                </p>
+              }
+            </div>
 
-          @if (userService.userState$ | async; as userState) {
-            @if (entityType !== EntityType.ALL_BOOKS && entityType !== EntityType.UNSHELVED &&
-            (userState.user!.permissions.admin || userState.user!.permissions.canManageLibrary)) {
-              <div class="entity-menu-wrapper">
-                <p-button
-                  icon="pi pi-ellipsis-v"
-                  [rounded]="true"
-                  [text]="true"
-                  severity="info"
-                  (click)="entitymenu.toggle($event)">
-                </p-button>
-                <p-menu #entitymenu [model]="entityOptions" [popup]="true" appendTo="body"></p-menu>
-              </div>
+            @if (userService.userState$ | async; as userState) {
+              @if (entityType !== EntityType.ALL_BOOKS && entityType !== EntityType.UNSHELVED &&
+              (userState.user!.permissions.admin || userState.user!.permissions.canManageLibrary)) {
+                <div class="entity-menu-wrapper">
+                  <p-button
+                    icon="pi pi-ellipsis-v"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="info"
+                    (click)="entitymenu.toggle($event)">
+                  </p-button>
+                  <p-menu #entitymenu [model]="entityOptions" [popup]="true" appendTo="body"></p-menu>
+                </div>
+              }
             }
           }
-        }
-      </div>
-      <div class="toolbar-actions">
+        </div>
+        <div class="toolbar-actions">
         <div class="toolbar-icons">
           @if (isFilterActive) {
             <a class="topbar-items topbar-item" (click)="clearFilter()">
@@ -258,6 +260,71 @@
             tooltipPosition="top">
           </i>
         </a>
+        </div>
+      </div>
+
+      @if (bookState$ | async; as headerState) {
+        @if (getBooksSummary(headerState.books); as summary) {
+          <div class="book-browser-header-bottom">
+            <div class="browser-summary">
+              <p class="browser-summary-line">
+                <span class="browser-summary-strong">{{ summary.total }}</span>
+                <span>{{ summary.total === 1 ? t('labels.item') : t('labels.items') }}</span>
+                <span class="summary-divider"></span>
+                <span class="browser-summary-strong">{{ summary.inProgress }}</span>
+                <span>in progress</span>
+                <span class="summary-divider"></span>
+                <span class="browser-summary-strong">{{ summary.unread }}</span>
+                <span>unread</span>
+              </p>
+              <div class="browser-meta-pills">
+                <span class="browser-meta-pill">
+                  <i class="pi pi-sort-alt"></i>
+                  {{ activeSortLabel }}
+                </span>
+                <span class="browser-meta-pill" [class.browser-meta-pill-accent]="activeFilterCount > 0">
+                  <i class="pi pi-filter"></i>
+                  {{ activeFilterCount }} active
+                </span>
+                <span class="browser-meta-pill">
+                  <i class="pi pi-table"></i>
+                  {{ currentViewMode === 'table' ? 'Table view' : 'Grid view' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="quick-filter-row">
+              <button
+                type="button"
+                class="quick-filter-chip"
+                [class.active]="isQuickFilterActive('all')"
+                (click)="applyQuickFilter('all')">
+                All books
+              </button>
+              <button
+                type="button"
+                class="quick-filter-chip"
+                [class.active]="isQuickFilterActive('reading')"
+                (click)="applyQuickFilter('reading')">
+                Reading
+              </button>
+              <button
+                type="button"
+                class="quick-filter-chip"
+                [class.active]="isQuickFilterActive('unread')"
+                (click)="applyQuickFilter('unread')">
+                Unread
+              </button>
+              <button
+                type="button"
+                class="quick-filter-chip"
+                [class.active]="isQuickFilterActive('finished')"
+                (click)="applyQuickFilter('finished')">
+                Finished
+              </button>
+            </div>
+          </div>
+        }
       </div>
     </div>
 
