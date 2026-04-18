@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
 }
 
 .home-menu-section {
@@ -11,13 +12,13 @@
     position: absolute;
     top: 0.125rem;
     right: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--p-surface-500);
+    font-size: 0.75rem;
+    color: var(--bl-text-4);
     cursor: pointer;
     transition: color 0.2s ease;
 
     &:hover {
-      color: var(--p-primary-color);
+      color: var(--bl-accent);
     }
   }
 }
@@ -30,8 +31,9 @@
   padding: 0.25rem;
 
   .sidebar-width-popover-label {
-    font-size: 0.8rem;
-    color: var(--p-text-muted-color);
+    font-size: 0.75rem;
+    color: var(--bl-text-3);
+    font-family: var(--bl-font-mono);
     white-space: nowrap;
     min-width: 38px;
     text-align: right;
@@ -43,36 +45,42 @@
 }
 
 .version-info {
-  padding: 1rem;
+  padding: 12px 4px 4px;
+  margin: 12px 4px 4px;
   text-align: center;
   width: 100%;
-  font-size: 0.875rem;
+  font-size: 11px;
+  border-top: 1px solid var(--bl-line-soft);
 }
 
 .version-text {
-  color: #e5e7eb;
+  color: var(--bl-text-3);
 }
 
 .version-link {
-  font-size: 0.875rem;
+  font-size: 11px;
+  font-family: var(--bl-font-mono);
+  color: var(--bl-text-3);
 
   &:hover {
     text-decoration: underline;
-    color: #f3f4f6;
+    color: var(--bl-text);
   }
 }
 
 .version-label {
-  font-size: 0.875rem;
+  font-size: 11px;
+  font-family: var(--bl-font-mono);
+  color: var(--bl-text-3);
 }
 
 .update-link {
   cursor: pointer;
-  color: #fb923c;
-  font-size: 0.75rem;
+  color: var(--bl-accent);
+  font-size: 11px;
 
   &:hover {
     text-decoration: underline;
-    color: #fdba74;
+    color: var(--bl-accent-2);
   }
 }

@@ -3,40 +3,64 @@
 
 .layout-sidebar {
   position: fixed;
-  width: var(--sidebar-width, 225px);
-  height: calc(100dvh - 6.1rem);
+  width: var(--sidebar-width, var(--bl-sidebar-w));
+  height: calc(100dvh - var(--bl-topbar-h));
   z-index: 999;
   overflow-y: auto;
   user-select: none;
-  top: 5rem;
-  left: 1.1rem;
+  top: var(--bl-topbar-h);
+  left: 0;
   transition: transform variables.$transitionDuration, left variables.$transitionDuration;
-  background-color: var(--card-background);
-  border: 1px solid var(--p-content-border-color);
-  border-radius: variables.$borderRadius;
-  padding: 0.5rem 0.8rem 0.5rem 1.35rem;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, .02), 0px 0px 2px rgba(0, 0, 0, .05), 0px 1px 4px rgba(0, 0, 0, .08);
+  background: var(--bl-bg);
+  border: 0;
+  border-right: 1px solid var(--bl-line-soft);
+  border-radius: 0;
+  padding: 18px 12px 14px;
+  box-shadow: none;
 }
-
 
 .layout-menu {
   margin: 0;
   padding: 0;
   list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  + .layout-menu {
+    margin-top: 14px;
+  }
 
   .layout-menuitem-text {
     display: flex;
     justify-content: space-between;
     width: 100%;
+    min-width: 0;
+
+    > span,
+    > div {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 
   .layout-root-menuitem {
     > .layout-menuitem-root-text {
-      font-size: .857rem;
+      font-family: var(--bl-font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      font-weight: 700;
-      color: var(--surface-900);
-      margin: .75rem 0;
+      color: var(--bl-text-4);
+      padding: 0 10px 8px;
+      margin: 0;
+      min-height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     > a {
@@ -66,17 +90,23 @@
     margin: 0;
     padding: 0;
     list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 
     a {
       display: flex;
       align-items: center;
+      gap: 10px;
       position: relative;
       outline: 0 none;
-      color: var(--text-color);
+      color: var(--bl-text-2);
       cursor: pointer;
-      padding: 0.45rem 0.3rem 0.45rem 0.6rem;
-      border-radius: variables.$borderRadius;
-      transition: background-color variables.$transitionDuration, box-shadow variables.$transitionDuration;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background variables.$transitionDuration, color variables.$transitionDuration;
 
       .layout-submenu-toggler {
         font-size: 75%;
@@ -85,12 +115,13 @@
       }
 
       &.active-route {
-        font-weight: 700;
-        color: var(--primary-color);
+        font-weight: 500;
+        color: var(--bl-text);
       }
 
       &:hover {
-        background-color: var(--surface-hover);
+        background: var(--bl-surface);
+        color: var(--bl-text);
       }
 
       &:focus {
@@ -100,36 +131,37 @@
 
     ul {
       overflow: hidden;
-      border-radius: variables.$borderRadius;
+      border-radius: 0;
+      padding-left: 0;
 
       li {
         a {
-          margin-left: 1rem;
+          margin-left: 0;
         }
 
         li {
           a {
-            margin-left: 2rem;
+            margin-left: 1rem;
           }
 
           li {
             a {
-              margin-left: 2.5rem;
+              margin-left: 2rem;
             }
 
             li {
               a {
-                margin-left: 3rem;
+                margin-left: 2.5rem;
               }
 
               li {
                 a {
-                  margin-left: 3.5rem;
+                  margin-left: 3rem;
                 }
 
                 li {
                   a {
-                    margin-left: 4rem;
+                    margin-left: 3.5rem;
                   }
                 }
               }
