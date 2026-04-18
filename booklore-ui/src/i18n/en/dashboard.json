@@ -12,6 +12,27 @@
       "dismiss": "Dismiss"
     }
   },
+  "hero": {
+    "greetingMorning": "Good morning",
+    "greetingAfternoon": "Good afternoon",
+    "greetingEvening": "Good evening",
+    "greetingNight": "Good night",
+    "youAreReading": "You're reading",
+    "libraryAtAGlance": "Your library at a glance",
+    "continueReading": "Continue reading",
+    "pages": "pages",
+    "inProgress": "In progress",
+    "openDetails": "Open details",
+    "resume": "Resume",
+    "booksInLibrary": "Books in library",
+    "acrossShelves": "across your shelves",
+    "inProgressStat": "In progress",
+    "resumeAnytime": "resume anytime",
+    "finishedThisYear": "Finished this year",
+    "keepStreak": "keep the streak going",
+    "unread": "Unread",
+    "waitingToBeDiscovered": "waiting to be discovered"
+  },
   "scroller": {
     "noBooksFound": "No books found for this scroller.",
     "loadError": "Failed to load books! Please try refreshing the page.",

@@ -1,0 +1,104 @@
+<ng-container *transloco="let t; prefix: 'dashboard.hero'">
+  @if (vm$ | async; as vm) {
+    <section class="bl-hero">
+      <div class="bl-hero__greeting">
+        <span class="bl-hero__muted">{{ t(vm.greetingKey) }}{{ vm.userName ? ', ' + vm.userName : '' }}</span>
+        @if (vm.current) {
+          <h1 class="bl-hero__title">
+            {{ t('youAreReading') }}
+            <span class="bl-hero__title-em">{{ vm.current.metadata?.title }}</span>
+          </h1>
+        } @else {
+          <h1 class="bl-hero__title">{{ t('libraryAtAGlance') }}</h1>
+        }
+      </div>
+
+      @if (vm.current) {
+        <article class="bl-hero__card" (click)="resume(vm.current)">
+          <div class="bl-hero__glow"></div>
+          <div class="bl-hero__layout">
+            <div class="bl-hero__cover">
+              @if (vm.coverUrl) {
+                <img [src]="vm.coverUrl" [alt]="vm.current.metadata?.title || 'Cover'" loading="lazy"/>
+              }
+            </div>
+            <div class="bl-hero__meta">
+              <div class="bl-hero__eyebrow">
+                <i class="pi pi-book"></i>
+                <span>{{ t('continueReading') }}</span>
+                @if (vm.current.metadata?.seriesName) {
+                  <span class="bl-hero__series">· {{ vm.current.metadata?.seriesName }}
+                    @if (vm.current.metadata?.seriesNumber != null) { #{{ vm.current.metadata?.seriesNumber }} }
+                  </span>
+                }
+              </div>
+              <h2 class="bl-hero__book-title">{{ vm.current.metadata?.title }}</h2>
+              <div class="bl-hero__byline">
+                @if (vm.current.metadata?.authors?.length) {
+                  {{ vm.current.metadata?.authors?.join(', ') }}
+                }
+                @if (vm.current.metadata?.pageCount) {
+                  <span class="bl-hero__dot">·</span> {{ vm.current.metadata?.pageCount | number }} {{ t('pages') }}
+                }
+              </div>
+              <div class="bl-hero__progress-row">
+                <div class="bl-hero__progress-label">
+                  <span class="bl-hero__muted">{{ t('inProgress') }}</span>
+                  <span class="bl-hero__pct">{{ vm.progress }}%</span>
+                </div>
+                <div class="bl-hero__bar"><span [style.width.%]="vm.progress"></span></div>
+              </div>
+            </div>
+            <div class="bl-hero__actions">
+              <button type="button" class="bl-btn bl-btn--primary bl-hero__resume" (click)="$event.stopPropagation(); resume(vm.current)">
+                <i class="pi pi-play-circle"></i>
+                <span>{{ t('resume') }}</span>
+              </button>
+              <button type="button" class="bl-btn bl-btn--ghost bl-hero__secondary" (click)="$event.stopPropagation(); openLibrary()">
+                {{ t('openDetails') }}
+              </button>
+            </div>
+          </div>
+        </article>
+      }
+
+      <div class="bl-hero__stats">
+        <div class="bl-stat">
+          <div class="bl-stat__header">
+            <div class="bl-stat__label">{{ t('booksInLibrary') }}</div>
+            <div class="bl-stat__icon"><i class="pi pi-book"></i></div>
+          </div>
+          <div class="bl-stat__value">{{ vm.stats.totalBooks | number }}</div>
+          <div class="bl-stat__delta">{{ t('acrossShelves') }}</div>
+        </div>
+
+        <div class="bl-stat bl-stat--accent">
+          <div class="bl-stat__header">
+            <div class="bl-stat__label">{{ t('inProgressStat') }}</div>
+            <div class="bl-stat__icon"><i class="pi pi-bookmark"></i></div>
+          </div>
+          <div class="bl-stat__value">{{ vm.stats.inProgress | number }}</div>
+          <div class="bl-stat__delta">{{ t('resumeAnytime') }}</div>
+        </div>
+
+        <div class="bl-stat">
+          <div class="bl-stat__header">
+            <div class="bl-stat__label">{{ t('finishedThisYear') }}</div>
+            <div class="bl-stat__icon"><i class="pi pi-check-circle"></i></div>
+          </div>
+          <div class="bl-stat__value">{{ vm.stats.finishedThisYear | number }}</div>
+          <div class="bl-stat__delta">{{ t('keepStreak') }}</div>
+        </div>
+
+        <div class="bl-stat">
+          <div class="bl-stat__header">
+            <div class="bl-stat__label">{{ t('unread') }}</div>
+            <div class="bl-stat__icon"><i class="pi pi-inbox"></i></div>
+          </div>
+          <div class="bl-stat__value">{{ vm.stats.unread | number }}</div>
+          <div class="bl-stat__delta">{{ t('waitingToBeDiscovered') }}</div>
+        </div>
+      </div>
+    </section>
+  }
+</ng-container>
