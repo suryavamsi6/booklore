@@ -3,27 +3,33 @@
 
 .layout-topbar {
   position: fixed;
-  height: 3.85rem;
+  height: var(--bl-topbar-h);
   z-index: 997;
   left: 0;
   top: 0;
   width: 100%;
-  padding: 0 1rem;
-  background-color: color-mix(in srgb, var(--card-background) 25%, transparent);
+  padding: 0 20px;
+  background: var(--bl-bg);
   border: none;
-  border-bottom: 1px solid var(--p-content-border-color);
+  border-bottom: 1px solid var(--bl-line-soft);
   transition: left variables.$transitionDuration;
   display: flex;
   align-items: center;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, .02), 0px 0px 2px rgba(0, 0, 0, .05), 0px 1px 4px rgba(0, 0, 0, .08);
+  gap: 12px;
+  box-shadow: none;
 
   .layout-topbar-logo {
     display: flex;
     align-items: center;
-    font-size: 1.7rem;
-    font-weight: 500;
-    width: 265px;
-    border-radius: 12px;
+    gap: 10px;
+    font-family: var(--bl-font-serif);
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    width: var(--bl-sidebar-w);
+    padding-right: 12px;
+    border-radius: 0;
+    color: var(--bl-text);
   }
 }
 
@@ -40,7 +46,7 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-  gap: 0.3rem;
+  gap: 4px;
   align-items: center;
 
   li {
@@ -52,53 +58,60 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border: 1px solid var(--border-color);
-    width: 2.5rem;
-    height: 2.5rem;
-    transition: outline-color .2s, border-color .2s;
-    border-radius: 6px;
+    border: 0;
+    width: 36px;
+    height: 36px;
+    transition: background 120ms, color 120ms;
+    border-radius: 8px;
     margin: 0;
     padding: 0;
-    outline-color: transparent;
-    background-color: var(--card-background);
+    outline: 0;
+    background: transparent;
+    color: var(--bl-text-3);
     cursor: pointer;
 
-    //@include focus-visible();
-
     &:hover {
-      border-color: var(--primary-color);
+      background: var(--bl-surface);
+      color: var(--bl-text);
     }
 
     i, span {
-      color: var(--text-color);
+      color: inherit;
     }
   }
 
   .config-item {
-    background-color: var(--primary-color);
+    background: transparent;
+    color: var(--bl-text-3);
 
     i {
-      color: var(--primary-contrast-color);
+      color: inherit;
+    }
+
+    &:hover {
+      background: var(--bl-surface);
+      color: var(--bl-text);
     }
   }
 
   .config-panel {
     position: absolute;
-    top: calc(100% + 4px);
+    top: calc(100% + 8px);
     inset-inline-end: 0;
     width: 18rem;
-    padding: .75rem;
-    background-color: var(--overlay-background);
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
+    padding: 14px;
+    background: oklch(0.22 0.012 260 / 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--bl-radius-lg);
+    border: 1px solid var(--bl-line);
     transform-origin: top;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: var(--bl-shadow-2);
 
     &.notification-box {
       width: 30rem;
-      background-color: var(--card-background);
-      border: 0.25px solid var(--primary-color);
-      border-radius: 4px;
+      background: var(--bl-surface);
+      border: 1px solid var(--bl-line-soft);
+      border-radius: var(--bl-radius);
       min-height: 5rem;
     }
 
@@ -109,8 +122,10 @@
     }
 
     .config-panel-label {
-      font-size: .875rem;
-      color: var(--text-secondary-color);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--bl-text-4);
       font-weight: 600;
       line-height: 1;
     }
@@ -118,25 +133,25 @@
     .config-panel-colors {
       > div {
         justify-content: flex-start;
-        padding-top: .5rem;
+        padding-top: 0.5rem;
         display: flex;
-        gap: .5rem;
+        gap: 6px;
         flex-wrap: wrap;
 
         button {
-          border: none;
-          width: 1.25rem;
-          height: 1.25rem;
-          border-radius: 50%;
+          border: 1px solid oklch(1 0 0 / 0.1);
+          width: 22px;
+          height: 22px;
+          border-radius: 6px;
           padding: 0;
           cursor: pointer;
           outline-color: transparent;
           outline-width: 2px;
           outline-style: solid;
-          outline-offset: 1px;
+          outline-offset: 2px;
 
           &.active-color {
-            outline-color: var(--primary-color);
+            outline-color: var(--bl-text);
           }
         }
       }
@@ -162,16 +177,15 @@
 }
 
 .half-title {
-  color: var(--primary-color);
+  color: var(--bl-accent);
 }
 
 .multi-color-chart-icon {
-  width: 1.3rem;
-  height: 1.3rem;
+  width: 1.15rem;
+  height: 1.15rem;
   display: inline-block;
 }
 
-// Animation classes for pStyleClass directive (theme configurator dropdown)
 @keyframes scalein {
   0% {
     opacity: 0;

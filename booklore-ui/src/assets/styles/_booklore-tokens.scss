@@ -1,0 +1,79 @@
+/* Booklore Redesign — Refined Dark tokens
+ * Source of truth for the redesigned visual language.
+ * Applied globally; all layout/shell/page SCSS consumes these variables.
+ */
+
+:root {
+  /* Surfaces (deep near-black with a warm blue undertone) */
+  --bl-bg:         oklch(0.17 0.008 260);
+  --bl-bg-2:       oklch(0.20 0.010 260);
+  --bl-surface:    oklch(0.225 0.012 260);
+  --bl-surface-2:  oklch(0.255 0.013 260);
+  --bl-surface-hi: oklch(0.30 0.014 260);
+
+  /* Hairlines */
+  --bl-line:       oklch(0.32 0.012 260 / 0.6);
+  --bl-line-soft:  oklch(0.32 0.012 260 / 0.3);
+
+  /* Text */
+  --bl-text:       oklch(0.96 0.005 260);
+  --bl-text-2:     oklch(0.78 0.008 260);
+  --bl-text-3:     oklch(0.60 0.010 260);
+  --bl-text-4:     oklch(0.46 0.012 260);
+
+  /* Accent — muted amber/gold, used sparingly */
+  --bl-accent:       oklch(0.82 0.13 75);
+  --bl-accent-2:     oklch(0.72 0.14 75);
+  --bl-accent-ink:   oklch(0.18 0.02 75);
+  --bl-accent-soft:  oklch(0.82 0.13 75 / 0.12);
+
+  /* Secondary accents */
+  --bl-jade:      oklch(0.74 0.10 165);
+  --bl-jade-soft: oklch(0.74 0.10 165 / 0.14);
+  --bl-rose:      oklch(0.72 0.12 20);
+  --bl-violet:    oklch(0.72 0.12 300);
+  --bl-sky:       oklch(0.72 0.12 230);
+
+  /* Radii */
+  --bl-radius-sm: 6px;
+  --bl-radius:    10px;
+  --bl-radius-lg: 16px;
+
+  /* Shadows */
+  --bl-shadow-1: 0 1px 0 oklch(1 0 0 / 0.04) inset, 0 1px 2px oklch(0 0 0 / 0.3);
+  --bl-shadow-2: 0 10px 30px oklch(0 0 0 / 0.35), 0 2px 8px oklch(0 0 0 / 0.25);
+  --bl-shadow-cover: 0 1px 0 oklch(1 0 0 / 0.05) inset, 0 2px 10px oklch(0 0 0 / 0.4), 0 0 0 1px oklch(0 0 0 / 0.3);
+  --bl-shadow-cover-hover: 0 1px 0 oklch(1 0 0 / 0.08) inset, 0 14px 28px oklch(0 0 0 / 0.55), 0 0 0 1px oklch(0 0 0 / 0.3);
+
+  /* Typography */
+  --bl-font-ui:    'Inter Tight', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --bl-font-serif: 'Fraunces', ui-serif, Georgia, serif;
+  --bl-font-mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Sidebar layout */
+  --bl-sidebar-w: 232px;
+  --bl-topbar-h:  56px;
+}
+
+/* Override PrimeNG / legacy layout tokens so every existing component
+ * inherits the refined-dark surface language. Scoped to .p-dark so light
+ * mode (if re-enabled) isn't affected. */
+.p-dark,
+:root {
+  --ground-background: var(--bl-bg);
+  --card-background:   var(--bl-surface);
+  --border-color:      var(--bl-line-soft);
+  --surface-hover:     var(--bl-surface-2);
+  --overlay-background: var(--bl-surface);
+  --text-color:          var(--bl-text);
+  --text-secondary-color: var(--bl-text-3);
+  --primary-color: var(--bl-accent);
+  --primary-contrast-color: var(--bl-accent-ink);
+  --font-family: var(--bl-font-ui);
+}
+
+.p-dark {
+  --p-content-border-color: var(--bl-line-soft);
+  --p-primary-color: var(--bl-accent);
+  --p-primary-contrast-color: var(--bl-accent-ink);
+}
