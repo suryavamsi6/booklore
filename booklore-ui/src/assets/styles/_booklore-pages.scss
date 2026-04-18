@@ -1,0 +1,607 @@
+/* Booklore Redesign — Phase 3 page-level refinements
+ * Applies the refined-dark visual language to the remaining page
+ * surfaces: book detail / metadata viewer, library browser, filter rail,
+ * settings, and bookdrop (upload / add books).
+ *
+ * This file is additive. It targets existing Angular component class
+ * names to avoid re-templating components; phase 1 established the
+ * tokens and chrome, phase 2 applied them to the shell + dashboard +
+ * book card, and this phase finishes the remaining pages.
+ */
+
+/* =====================================================================
+ * Book detail / metadata viewer
+ * ===================================================================*/
+app-book-metadata-center {
+  .book-metadata-center-container {
+    background: transparent;
+  }
+
+  /* Make the outer panel header feel more editorial — serif number/title
+   * and a quieter hairline underneath. */
+  .panel-header {
+    border-bottom: 1px solid var(--bl-line-soft);
+    background: transparent;
+    padding: 18px 22px;
+
+    .p-button.p-button-text {
+      color: var(--bl-text-2);
+    }
+  }
+
+  .tabs-wrapper {
+    border-color: var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+    background: var(--bl-surface);
+  }
+}
+
+app-metadata-viewer {
+  .metadata-viewer-container {
+    padding: 22px 24px 8px;
+    gap: 22px;
+
+    @media (min-width: 768px) {
+      padding: 28px 28px 12px;
+    }
+  }
+
+  /* Editorial hero: soften divider, lighten surface, serif the title */
+  .metadata-header {
+    gap: 28px;
+    padding-bottom: 22px;
+    border-bottom-color: var(--bl-line-soft);
+  }
+
+  .cover-wrapper {
+    border-radius: var(--bl-radius);
+    overflow: hidden;
+    box-shadow: var(--bl-shadow-cover);
+    transition: box-shadow 200ms ease;
+
+    &:hover {
+      box-shadow: var(--bl-shadow-cover-hover);
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  .series-badge {
+    background: oklch(0.17 0.008 260 / 0.72);
+    border-color: var(--bl-line-soft);
+    color: var(--bl-text-2);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.68rem;
+  }
+
+  .book-title {
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+    color: var(--bl-text);
+
+    @media (min-width: 768px) {
+      font-size: 2.25rem;
+    }
+  }
+
+  .authors {
+    color: var(--bl-text-3);
+
+    .author-link {
+      color: var(--bl-text);
+      font-weight: 500;
+
+      &:hover {
+        color: var(--bl-accent);
+        text-decoration: none;
+      }
+    }
+  }
+
+  .series-link {
+    color: var(--bl-text-3);
+    font-style: normal;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.72rem;
+
+    &:hover {
+      color: var(--bl-accent);
+    }
+  }
+
+  .metadata-grid {
+    gap: 0.75rem 1.25rem;
+    padding: 0.25rem 0 0;
+  }
+
+  .metadata-item {
+    min-height: 1.6rem;
+    color: var(--bl-text-2);
+  }
+
+  .metadata-key {
+    color: var(--bl-text-4);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    min-width: 88px;
+  }
+
+  .metadata-value {
+    color: var(--bl-text);
+  }
+
+  /* Card-look sections (description, comic, etc.) */
+  .description-section,
+  .comic-metadata-section {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+
+    &:hover {
+      box-shadow: var(--bl-shadow-1);
+    }
+  }
+
+  .section-header,
+  .section-header.clickable {
+    background: transparent;
+    border-bottom: 1px solid var(--bl-line-soft);
+    padding: 0.7rem 1rem;
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--bl-text);
+
+    i:first-child,
+    .section-header-left i {
+      color: var(--bl-accent);
+    }
+  }
+
+  .description-html {
+    color: var(--bl-text-2);
+    line-height: 1.65;
+    font-size: 0.95rem;
+  }
+
+  .expand-toggle {
+    color: var(--bl-accent);
+
+    &:hover {
+      background: var(--bl-accent-soft);
+      color: var(--bl-accent);
+    }
+  }
+
+  .tag-label {
+    color: var(--bl-text-4);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .action-buttons-container {
+    border-top-color: var(--bl-line-soft);
+  }
+
+  .action-group.navigation-group,
+  .action-group.primary-actions {
+    border-right-color: var(--bl-line-soft);
+  }
+
+  .divider {
+    background: var(--bl-line-soft);
+  }
+
+  .file-path-code {
+    font-family: var(--bl-font-mono);
+    color: var(--bl-text-3);
+  }
+}
+
+/* =====================================================================
+ * Library / book browser — toolbar + filter rail
+ * ===================================================================*/
+app-book-browser {
+  .book-browser-header {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+    padding: 0.6rem 0.9rem;
+
+    @media (min-width: 768px) {
+      padding: 0.75rem 1.1rem;
+    }
+  }
+
+  .entity-title {
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: var(--bl-text);
+
+    @media (min-width: 768px) {
+      font-size: 1.35rem;
+    }
+  }
+
+  .series-collapsed-info {
+    color: var(--bl-text-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Icon-style toolbar buttons pick up the chrome tokens */
+  .topbar-item {
+    background: transparent;
+    border-color: var(--bl-line-soft);
+    border-radius: 8px;
+    transition: background 160ms, border-color 160ms, color 160ms;
+
+    &:hover {
+      background: var(--bl-surface-2);
+      border-color: var(--bl-line);
+    }
+
+    i,
+    span {
+      color: var(--bl-text-2);
+      font-weight: 400;
+    }
+
+    &:hover i,
+    &:hover span {
+      color: var(--bl-text);
+    }
+  }
+
+  /* Ghost-style quieter buttons where an outline reads too loud */
+  .filter-clear-icon {
+    color: var(--bl-accent);
+  }
+
+  .search-input {
+    background: var(--bl-surface-2);
+    border-color: var(--bl-line-soft);
+    color: var(--bl-text);
+
+    &::placeholder {
+      color: var(--bl-text-4);
+    }
+
+    &:focus {
+      border-color: var(--bl-accent);
+      box-shadow: 0 0 0 2px var(--bl-accent-soft);
+    }
+  }
+
+  .search-icon {
+    color: var(--bl-text-4);
+  }
+
+  .book-browser-footer {
+    background: oklch(0.22 0.012 260 / 0.96);
+    border-color: var(--bl-line-soft);
+    backdrop-filter: blur(12px);
+  }
+
+  .selected-count {
+    color: var(--bl-accent);
+  }
+
+  .no-books-text {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    color: var(--bl-text-2);
+  }
+}
+
+/* Filter rail — quieter, editorial section headers + refined accordion */
+app-book-filter {
+  .book-filter-container {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+  }
+
+  .filter-header {
+    padding: 0.9rem 1rem;
+    border-bottom-color: var(--bl-line-soft);
+  }
+
+  .filter-title {
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--bl-text);
+    letter-spacing: -0.01em;
+  }
+
+  .filter-mode-select {
+    color: var(--bl-text-3);
+  }
+
+  .filter-content {
+    padding-top: 0.25rem;
+  }
+
+  .filter-type-label {
+    color: var(--bl-text-2);
+    font-size: 0.8rem;
+  }
+
+  .filter-label-text {
+    color: var(--bl-text);
+  }
+
+  .active-filter-count {
+    color: var(--bl-accent);
+    font-variant-numeric: tabular-nums;
+    font-family: var(--bl-font-mono);
+    font-size: 0.75rem;
+  }
+
+  .filter-row {
+    font-size: 0.85rem;
+    color: var(--bl-text-2);
+
+    &.active {
+      color: var(--bl-accent);
+    }
+  }
+
+  .truncation-notice,
+  .footer-notice {
+    color: var(--bl-text-4);
+    border-top-color: var(--bl-line-soft);
+  }
+
+  p-accordion-header {
+    --p-accordion-header-padding: 0.7rem 1rem;
+    --p-accordion-header-color: var(--bl-text-4);
+    --p-accordion-header-font-size: 0.72rem;
+    --p-accordion-header-font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* =====================================================================
+ * Settings — shell + tab chrome
+ * ===================================================================*/
+app-settings {
+  .settings-container {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+    box-shadow: var(--bl-shadow-1);
+  }
+
+  p-tablist .p-tablist-tab-list {
+    background: transparent;
+    border-bottom: 1px solid var(--bl-line-soft);
+    padding: 0 0.5rem;
+  }
+
+  p-tab .p-tab {
+    color: var(--bl-text-3);
+    padding: 0.8rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    transition: color 160ms, border-color 160ms;
+
+    &:hover {
+      color: var(--bl-text);
+    }
+
+    &.p-tab-active,
+    &[data-p-active="true"] {
+      color: var(--bl-text);
+      border-bottom-color: var(--bl-accent);
+      background: transparent;
+    }
+
+    i {
+      color: var(--bl-text-4);
+      margin-right: 0.4rem;
+    }
+
+    &.p-tab-active i,
+    &[data-p-active="true"] i {
+      color: var(--bl-accent);
+    }
+  }
+
+  p-tabpanels {
+    background: transparent;
+  }
+}
+
+/* =====================================================================
+ * Bookdrop — upload / add books
+ * ===================================================================*/
+app-bookdrop-file-review-component {
+  .main-card {
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-line-soft);
+    border-radius: var(--bl-radius);
+    box-shadow: var(--bl-shadow-1);
+  }
+
+  .header {
+    border-bottom-color: var(--bl-line-soft);
+    padding: 1.35rem 1.5rem;
+    gap: 1.25rem;
+
+    @media (max-width: 768px) {
+      padding: 1rem 1.1rem;
+    }
+  }
+
+  .header-content h2 {
+    font-family: var(--bl-font-serif);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    font-size: 1.4rem;
+    color: var(--bl-text);
+  }
+
+  .header-content p {
+    color: var(--bl-text-3);
+
+    strong {
+      color: var(--bl-accent);
+      font-weight: 600;
+    }
+  }
+
+  .controls-section {
+    border-bottom-color: var(--bl-line-soft);
+    background: var(--bl-surface);
+  }
+
+  .controls-row label {
+    color: var(--bl-text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+
+  .file-row {
+    border-bottom-color: var(--bl-line-soft);
+    transition: background 160ms;
+
+    &:hover {
+      background: var(--bl-surface-2);
+    }
+
+    &.expanded {
+      background: var(--bl-surface-2);
+    }
+  }
+
+  .cover-image {
+    border-radius: 4px;
+    box-shadow: 0 1px 3px oklch(0 0 0 / 0.35);
+  }
+
+  div.cover-image {
+    background: var(--bl-surface-hi);
+    color: var(--bl-text-4);
+  }
+
+  .file-name {
+    font-family: var(--bl-font-mono);
+    font-size: 0.82rem;
+    color: var(--bl-text);
+  }
+
+  .metadata-status {
+    font-variant-numeric: tabular-nums;
+    font-family: var(--bl-font-mono);
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+
+    &.copied {
+      background: var(--bl-jade-soft);
+      color: var(--bl-jade);
+    }
+
+    &.no-metadata {
+      background: var(--bl-surface-hi);
+      color: var(--bl-text-3);
+    }
+
+    &.not-applied {
+      background: oklch(0.72 0.12 20 / 0.14);
+      color: var(--bl-rose);
+    }
+  }
+
+  .details-section {
+    border-bottom-color: var(--bl-line-soft);
+  }
+
+  .footer,
+  .footer-mobile {
+    border-top: 1px solid var(--bl-line-soft);
+  }
+
+  .empty-state {
+    color: var(--bl-text-4);
+    font-style: normal;
+  }
+
+  .selected-count-label {
+    color: var(--bl-text-3);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* =====================================================================
+ * Global PrimeNG dialog polish — editorial headers, quieter borders
+ * Scoped generically so every book-detail / picker modal that opens in
+ * phase 3 inherits the refined language.
+ * ===================================================================*/
+.p-dialog {
+  .p-dialog-header {
+    border-bottom: 1px solid var(--bl-line-soft);
+    background: transparent;
+
+    .p-dialog-title {
+      font-family: var(--bl-font-serif);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--bl-text);
+    }
+  }
+
+  .p-dialog-footer {
+    border-top: 1px solid var(--bl-line-soft);
+    background: transparent;
+  }
+}
+
+/* =====================================================================
+ * Small shared polish — PrimeNG accordion + select + inputtext in
+ * refined dark surfaces. Applied broadly so every settings/filter/
+ * bookdrop form picks up the tokens without bespoke overrides.
+ * ===================================================================*/
+.p-accordion {
+  --p-accordion-content-border-color: var(--bl-line-soft);
+  --p-accordion-header-border-color: var(--bl-line-soft);
+  --p-accordion-header-hover-background: var(--bl-surface-2);
+  --p-accordion-header-active-hover-background: var(--bl-surface-2);
+}
+
+.p-select,
+.p-inputtext,
+.p-multiselect,
+.p-togglebutton {
+  --p-select-background: var(--bl-surface-2);
+  --p-select-border-color: var(--bl-line-soft);
+  --p-select-hover-border-color: var(--bl-line);
+  --p-select-focus-border-color: var(--bl-accent);
+  --p-inputtext-background: var(--bl-surface-2);
+  --p-inputtext-border-color: var(--bl-line-soft);
+  --p-inputtext-hover-border-color: var(--bl-line);
+  --p-inputtext-focus-border-color: var(--bl-accent);
+}
