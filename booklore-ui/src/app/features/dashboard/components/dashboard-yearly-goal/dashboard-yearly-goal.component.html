@@ -1,0 +1,26 @@
+<div class="bl-goal-card">
+  <div class="bl-goal-header">
+    <span class="bl-goal-title">Yearly Goal</span>
+  </div>
+  @if (vm$ | async; as vm) {
+    <div class="bl-goal-body">
+      <div class="bl-goal-ring">
+        <svg viewBox="0 0 88 88" fill="none">
+          <circle class="bl-ring-track" cx="44" cy="44" r="36" stroke-width="6"/>
+          <circle class="bl-ring-fill" cx="44" cy="44" r="36" stroke-width="6"
+                  stroke-linecap="round"
+                  [attr.stroke-dasharray]="vm.circumference"
+                  [attr.stroke-dashoffset]="vm.dashOffset"
+                  transform="rotate(-90 44 44)"/>
+        </svg>
+        <div class="bl-goal-center">
+          <span class="bl-goal-pct">{{ vm.pct }}%</span>
+        </div>
+      </div>
+      <div class="bl-goal-info">
+        <div class="bl-goal-count">{{ vm.finished }} <span>/ {{ vm.goal }}</span></div>
+        <div class="bl-goal-sub">books read this year</div>
+      </div>
+    </div>
+  }
+</div>

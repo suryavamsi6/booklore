@@ -130,6 +130,10 @@ export class DialogLauncherService {
     });
   }
 
+  openBookUploaderDialog(): DynamicDialogRef | null {
+    return this.openFileUploadDialog();
+  }
+
   openCreateUserDialog(): DynamicDialogRef | null {
     return this.openDialog(CreateUserDialogComponent, {
       showHeader: false,

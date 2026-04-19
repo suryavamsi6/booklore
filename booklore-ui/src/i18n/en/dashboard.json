@@ -43,6 +43,21 @@
     "magicShelf": "Magic Shelf",
     "default": "Scroller"
   },
+  "heatmap": {
+    "title": "Reading Activity",
+    "subtitle": "Last 28 days",
+    "noActivity": "No reading activity"
+  },
+  "goal": {
+    "title": "Yearly Goal",
+    "subtitle": "books read this year",
+    "ofGoal": "of {{goal}} goal"
+  },
+  "genres": {
+    "title": "Top Genres",
+    "subtitle": "by book count",
+    "noGenres": "No genre data"
+  },
   "settings": {
     "title": "Dashboard Configuration",
     "description": "Add up to 5 scrollers from different book collections and customize their behavior",

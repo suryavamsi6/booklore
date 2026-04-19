@@ -1,0 +1,22 @@
+<div class="bl-genres-card">
+  <div class="bl-genres-header">
+    <span class="bl-genres-title">Top Genres</span>
+  </div>
+  @if (genres$ | async; as genres) {
+    @if (genres.length === 0) {
+      <p class="bl-genres-empty">No genre data yet</p>
+    } @else {
+      <div class="bl-genres-list">
+        @for (g of genres; track g.name) {
+          <div class="bl-genre-row">
+            <div class="bl-genre-name">{{ g.name }}</div>
+            <div class="bl-genre-bar-wrap">
+              <div class="bl-genre-bar" [style.width.%]="g.pct"></div>
+            </div>
+            <div class="bl-genre-count">{{ g.count }}</div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

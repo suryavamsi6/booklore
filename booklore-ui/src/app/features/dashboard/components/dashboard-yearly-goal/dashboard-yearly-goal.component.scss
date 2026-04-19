@@ -1,0 +1,80 @@
+.bl-goal-card {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-line-soft);
+  border-radius: var(--bl-radius);
+  padding: 16px;
+}
+
+.bl-goal-header {
+  margin-bottom: 12px;
+}
+
+.bl-goal-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bl-text);
+}
+
+.bl-goal-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bl-goal-ring {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+
+  svg { width: 100%; height: 100%; }
+}
+
+.bl-ring-track {
+  stroke: var(--bl-surface-hi);
+}
+
+.bl-ring-fill {
+  stroke: var(--bl-accent);
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.bl-goal-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bl-goal-pct {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--bl-accent);
+  font-family: var(--bl-font-mono);
+}
+
+.bl-goal-info {
+  flex: 1;
+}
+
+.bl-goal-count {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--bl-text);
+  font-family: var(--bl-font-serif);
+  line-height: 1;
+
+  span {
+    font-size: 14px;
+    color: var(--bl-text-3);
+    font-family: var(--bl-font-ui);
+    font-weight: 400;
+  }
+}
+
+.bl-goal-sub {
+  font-size: 11px;
+  color: var(--bl-text-4);
+  margin-top: 4px;
+}

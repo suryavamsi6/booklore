@@ -1,0 +1,159 @@
+.bl-cmdk-backdrop {
+  position: fixed;
+  inset: 0;
+  background: oklch(0 0 0 / 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  animation: bl-fade-in 0.12s ease;
+}
+
+@keyframes bl-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bl-cmdk {
+  width: 640px;
+  max-width: calc(100vw - 32px);
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-line);
+  border-radius: var(--bl-radius-lg);
+  box-shadow: 0 24px 60px oklch(0 0 0 / 0.55), 0 4px 16px oklch(0 0 0 / 0.3);
+  overflow: hidden;
+  animation: bl-pop-in 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bl-pop-in {
+  from { opacity: 0; transform: scale(0.94) translateY(-8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.bl-cmdk-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bl-line-soft);
+}
+
+.bl-cmdk-icon {
+  color: var(--bl-text-4);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.bl-cmdk-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--bl-text);
+  font-family: var(--bl-font-ui);
+
+  &::placeholder { color: var(--bl-text-4); }
+}
+
+.bl-cmdk-esc {
+  font-size: 10px;
+  color: var(--bl-text-4);
+  background: var(--bl-surface-hi);
+  border: 1px solid var(--bl-line);
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-family: var(--bl-font-mono);
+  user-select: none;
+}
+
+.bl-cmdk-results {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+
+.bl-cmdk-section {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bl-text-4);
+  padding: 8px 16px 4px;
+}
+
+.bl-cmdk-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+
+  &:hover,
+  &.active {
+    background: var(--bl-surface-hi);
+  }
+}
+
+.bl-cmdk-cover {
+  width: 28px;
+  height: 38px;
+  border-radius: 3px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--bl-surface-hi);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.bl-cmdk-nav-icon {
+  font-size: 14px;
+  color: var(--bl-text-3);
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.bl-cmdk-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.bl-cmdk-title {
+  font-size: 13px;
+  color: var(--bl-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bl-cmdk-sub {
+  font-size: 11px;
+  color: var(--bl-text-3);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bl-cmdk-hint {
+  font-size: 12px;
+  color: var(--bl-text-4);
+  flex-shrink: 0;
+}
+
+.bl-cmdk-empty {
+  padding: 24px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--bl-text-4);
+}

@@ -1,0 +1,65 @@
+.bl-genres-card {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-line-soft);
+  border-radius: var(--bl-radius);
+  padding: 16px;
+}
+
+.bl-genres-header {
+  margin-bottom: 12px;
+}
+
+.bl-genres-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bl-text);
+}
+
+.bl-genres-empty {
+  font-size: 12px;
+  color: var(--bl-text-4);
+  margin: 0;
+}
+
+.bl-genres-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bl-genre-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 28px;
+  align-items: center;
+  gap: 8px;
+}
+
+.bl-genre-name {
+  font-size: 11px;
+  color: var(--bl-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bl-genre-bar-wrap {
+  height: 5px;
+  background: var(--bl-surface-hi);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bl-genre-bar {
+  height: 100%;
+  background: var(--bl-accent);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.bl-genre-count {
+  font-size: 10px;
+  color: var(--bl-text-4);
+  font-family: var(--bl-font-mono);
+  text-align: right;
+}

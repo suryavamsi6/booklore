@@ -58,6 +58,64 @@
   max-width: 520px;
 }
 
+/* Command palette trigger pill */
+.bl-search-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 520px;
+  height: 34px;
+  padding: 0 12px;
+  background: var(--bl-surface-hi);
+  border: 1px solid var(--bl-line-soft);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: var(--bl-line);
+    background: var(--bl-surface-2);
+  }
+
+  &__icon {
+    font-size: 13px;
+    color: var(--bl-text-4);
+    flex-shrink: 0;
+  }
+
+  &__placeholder {
+    flex: 1;
+    font-size: 13px;
+    color: var(--bl-text-4);
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__kbd {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+
+    span {
+      font-size: 10px;
+      font-family: var(--bl-font-mono);
+      color: var(--bl-text-4);
+      background: var(--bl-surface);
+      border: 1px solid var(--bl-line);
+      border-radius: 3px;
+      padding: 1px 4px;
+      line-height: 1.4;
+    }
+  }
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
 .topbar-desktop-items {
   display: none;
   align-items: center;
