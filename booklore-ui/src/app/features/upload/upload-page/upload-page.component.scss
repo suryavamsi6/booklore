@@ -1,0 +1,129 @@
+.bl-upload-page {
+  padding: 32px 40px 48px;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  @media (max-width: 767px) {
+    padding: 20px 16px;
+  }
+}
+
+.bl-upload-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bl-upload-title {
+  font-family: var(--bl-font-serif);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--bl-text);
+  margin: 0;
+}
+
+.bl-upload-sub {
+  font-size: 14px;
+  color: var(--bl-text-3);
+  margin: 0;
+}
+
+.bl-dropzone {
+  border: 2px dashed var(--bl-line);
+  border-radius: var(--bl-radius-lg);
+  padding: 56px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background: var(--bl-surface);
+  text-align: center;
+
+  &:hover {
+    border-color: var(--bl-accent-soft);
+    background: var(--bl-surface-2);
+  }
+
+  &--over {
+    border-color: var(--bl-accent);
+    background: var(--bl-accent-soft);
+    box-shadow: 0 0 0 4px var(--bl-accent-soft);
+  }
+}
+
+.bl-dropzone-icon {
+  width: 56px;
+  height: 56px;
+  background: var(--bl-surface-hi);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .pi {
+    font-size: 24px;
+    color: var(--bl-text-3);
+  }
+
+  .bl-dropzone--over & .pi {
+    color: var(--bl-accent);
+  }
+}
+
+.bl-dropzone-label {
+  font-family: var(--bl-font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--bl-text);
+  margin: 0;
+}
+
+.bl-dropzone-hint {
+  font-size: 12px;
+  color: var(--bl-text-4);
+  font-family: var(--bl-font-mono);
+  margin: 0;
+}
+
+.bl-dropzone-actions {
+  margin-top: 8px;
+}
+
+.bl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  border: none;
+  font-family: var(--bl-font-ui);
+
+  &--primary {
+    background: var(--bl-accent);
+    color: var(--bl-accent-ink);
+
+    &:hover { opacity: 0.88; }
+  }
+}
+
+.bl-upload-footnote {
+  font-size: 12px;
+  color: var(--bl-text-4);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+
+  .pi { font-size: 12px; }
+}

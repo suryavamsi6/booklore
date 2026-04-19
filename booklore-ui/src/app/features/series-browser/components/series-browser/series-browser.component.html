@@ -22,6 +22,26 @@
         </div>
       </div>
 
+      <div class="browse-chip-row">
+        @for (opt of filterOptions; track opt.value) {
+          <button
+            class="bl-chip"
+            [class.bl-chip--active]="(statusFilter$ | async) === opt.value"
+            (click)="onStatusFilterChange(opt.value)">
+            {{ opt.label }}
+          </button>
+        }
+        <span class="chip-divider"></span>
+        <div class="view-toggle">
+          <button class="view-btn" [class.view-btn--active]="viewMode === 'stacks'" (click)="viewMode = 'stacks'" [title]="t('viewStacks')">
+            <i class="pi pi-th-large"></i>
+          </button>
+          <button class="view-btn" [class.view-btn--active]="viewMode === 'list'" (click)="viewMode = 'list'" [title]="t('viewList')">
+            <i class="pi pi-list"></i>
+          </button>
+        </div>
+      </div>
+
       <div class="browse-controls">
         <div class="search-wrapper">
           <i class="pi pi-search search-icon"></i>
@@ -35,15 +55,6 @@
         </div>
 
         <div class="filter-sort-wrapper">
-          <p-select
-            [options]="filterOptions"
-            [ngModel]="statusFilter$ | async"
-            (ngModelChange)="onStatusFilterChange($event)"
-            optionLabel="label"
-            optionValue="value"
-            class="filter-dropdown">
-          </p-select>
-
           <p-select
             [options]="sortOptions"
             [ngModel]="sortBy$ | async"

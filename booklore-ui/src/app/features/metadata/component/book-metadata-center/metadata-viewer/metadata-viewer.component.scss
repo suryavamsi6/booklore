@@ -18,6 +18,23 @@
   gap: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: -60px;
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, oklch(0.82 0.13 75 / 0.10), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  > * { position: relative; z-index: 1; }
 
   @media (min-width: 768px) {
     flex-direction: row;
@@ -176,14 +193,16 @@
 }
 
 .book-title {
+  font-family: var(--bl-font-serif, 'Fraunces', Georgia, serif);
   font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--text-color);
+  font-weight: 600;
+  color: var(--bl-text, var(--text-color));
   line-height: 1.2;
+  letter-spacing: -0.02em;
   margin: 0;
 
   @media (min-width: 768px) {
-    font-size: 1.875rem;
+    font-size: 2rem;
   }
 }
 

@@ -415,6 +415,13 @@
 .bl-tabular { font-variant-numeric: tabular-nums; }
 .bl-muted { color: var(--bl-text-3); }
 .bl-dim   { color: var(--bl-text-4); }
+.bl-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bl-text-4);
+}
 
 /* ------ Pop-in animation (page tile stagger) -------------------- */
 @keyframes bl-pop {

@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
+import {Component, ElementRef, inject, OnDestroy, ViewChild} from '@angular/core';
 import {MenuItem} from 'primeng/api';
 import {LayoutService} from '../layout-main/service/app.layout.service';
 import {Router, RouterLink} from '@angular/router';
@@ -6,7 +6,6 @@ import {DynamicDialogRef} from 'primeng/dynamicdialog';
 import {TooltipModule} from 'primeng/tooltip';
 import {FormsModule} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
-import {BookSearcherComponent} from '../../../../features/book/components/book-searcher/book-searcher.component';
 import {AsyncPipe, NgClass, NgStyle} from '@angular/common';
 import {NotificationEventService} from '../../../websocket/notification-event.service';
 import {Button} from 'primeng/button';
@@ -29,6 +28,7 @@ import {TranslocoDirective, TranslocoService} from '@jsverse/transloco';
 import {AVAILABLE_LANGS, LANG_LABELS} from '../../../../core/config/transloco-loader';
 import {LANG_STORAGE_KEY} from '../../../../core/config/language-initializer';
 import {SUPPORT_ANIMATION_KEY} from '../../../../features/settings/global-preferences/global-preferences.component';
+import {CommandPaletteService} from '../../../components/command-palette/command-palette.service';
 
 @Component({
   selector: 'app-topbar',
@@ -40,7 +40,6 @@ import {SUPPORT_ANIMATION_KEY} from '../../../../features/settings/global-prefer
     TooltipModule,
     FormsModule,
     InputTextModule,
-    BookSearcherComponent,
     Button,
     ThemeConfiguratorComponent,
     StyleClass,
@@ -84,6 +83,12 @@ export class AppTopBarComponent implements OnDestroy {
   langMenuItems: MenuItem[] = [];
 
   private translocoService: TranslocoService;
+
+  private commandPaletteService = inject(CommandPaletteService);
+
+  openCommandPalette(): void {
+    this.commandPaletteService.open();
+  }
 
   constructor(
     public layoutService: LayoutService,

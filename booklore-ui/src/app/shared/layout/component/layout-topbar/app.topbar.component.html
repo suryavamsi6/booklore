@@ -27,7 +27,13 @@
   </p-button>
 
   <div class="topbar-content">
-    <app-book-searcher class="topbar-search"></app-book-searcher>
+    <button type="button" class="bl-search-pill" (click)="openCommandPalette()">
+      <i class="pi pi-search bl-search-pill__icon"></i>
+      <span class="bl-search-pill__placeholder">Search books, authors, series…</span>
+      <div class="bl-search-pill__kbd">
+        <span>⌘</span><span>K</span>
+      </div>
+    </button>
     <ul class="topbar-items topbar-desktop-items">
       <div class="topbar-action-group">
         @if (userService.userState$ | async; as userState) {
@@ -47,7 +53,7 @@
           }
           @if (userState.user?.permissions?.canUpload || userState.user?.permissions?.admin) {
             <li>
-              <a class="topbar-item" (click)="openFileUploadDialog()" [pTooltip]="t('uploadBook')" tooltipPosition="bottom">
+              <a class="topbar-item" [routerLink]="'/upload'" [pTooltip]="t('uploadBook')" tooltipPosition="bottom">
                 <i class="pi pi-upload topbar-icon"></i>
               </a>
             </li>

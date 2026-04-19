@@ -64,19 +64,30 @@
 
             <app-dashboard-hero></app-dashboard-hero>
 
-            @if (dashboardConfig$ | async; as config) {
-              @for (scroller of config.scrollers; track scroller.id) {
-                @if (scroller.enabled) {
-                  <app-dashboard-scroller
-                    [bookListType]="scroller.type"
-                    [title]="scroller.title"
-                    [isMagicShelf]="scroller.type === ScrollerType.MAGIC_SHELF"
-                    [useSquareCovers]="scroller.type === ScrollerType.LAST_LISTENED"
-                    [books]="getBooksForScroller(scroller) | async">
-                  </app-dashboard-scroller>
+            <!-- 2-column layout: scroller rows left, sidebar widgets right -->
+            <div class="dashboard-body">
+              <div class="dashboard-scrollers">
+                @if (dashboardConfig$ | async; as config) {
+                  @for (scroller of config.scrollers; track scroller.id) {
+                    @if (scroller.enabled) {
+                      <app-dashboard-scroller
+                        [bookListType]="scroller.type"
+                        [title]="scroller.title"
+                        [isMagicShelf]="scroller.type === ScrollerType.MAGIC_SHELF"
+                        [useSquareCovers]="scroller.type === ScrollerType.LAST_LISTENED"
+                        [books]="getBooksForScroller(scroller) | async">
+                      </app-dashboard-scroller>
+                    }
+                  }
                 }
-              }
-            }
+              </div>
+
+              <aside class="dashboard-sidebar">
+                <app-dashboard-activity-heatmap></app-dashboard-activity-heatmap>
+                <app-dashboard-yearly-goal></app-dashboard-yearly-goal>
+                <app-dashboard-top-genres></app-dashboard-top-genres>
+              </aside>
+            </div>
           }
         </div>
       </div>

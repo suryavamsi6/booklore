@@ -1,0 +1,28 @@
+<div class="bl-heatmap-card">
+  <div class="bl-heatmap-header">
+    <span class="bl-heatmap-title">Activity</span>
+    <span class="bl-heatmap-sub">last 28 days</span>
+  </div>
+  @if (days$ | async; as days) {
+    <div class="bl-heatmap-grid">
+      @for (day of days; track day.label) {
+        <div class="bl-heat-cell"
+             [class.level-1]="day.level === 1"
+             [class.level-2]="day.level === 2"
+             [class.level-3]="day.level === 3"
+             [class.level-4]="day.level === 4"
+             [title]="day.label">
+        </div>
+      }
+    </div>
+    <div class="bl-heatmap-legend">
+      <span>Less</span>
+      <div class="bl-heat-cell"></div>
+      <div class="bl-heat-cell level-1"></div>
+      <div class="bl-heat-cell level-2"></div>
+      <div class="bl-heat-cell level-3"></div>
+      <div class="bl-heat-cell level-4"></div>
+      <span>More</span>
+    </div>
+  }
+</div>

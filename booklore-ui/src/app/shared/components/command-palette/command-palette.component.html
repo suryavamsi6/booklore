@@ -1,0 +1,56 @@
+@if (isOpen$ | async) {
+  <div class="bl-cmdk-backdrop" (click)="close()">
+    <div class="bl-cmdk" (click)="$event.stopPropagation()">
+      <div class="bl-cmdk-search">
+        <i class="pi pi-search bl-cmdk-icon"></i>
+        <input #searchInput
+               type="text"
+               class="bl-cmdk-input"
+               placeholder="Search books, authors, or jump to a page…"
+               [(ngModel)]="query"
+               (ngModelChange)="activeIndex = 0"/>
+        <div class="bl-cmdk-esc" (click)="close()">esc</div>
+      </div>
+
+      <div class="bl-cmdk-results">
+        @if (filteredBooks.length > 0) {
+          <div class="bl-cmdk-section">Books</div>
+          @for (book of filteredBooks; track book.id; let i = $index) {
+            <div class="bl-cmdk-item"
+                 [class.active]="activeIndex === i"
+                 (click)="selectBook(book)"
+                 (mouseenter)="activeIndex = i">
+              <div class="bl-cmdk-cover">
+                <img [src]="coverUrl(book)" [alt]="book.metadata?.title || ''" loading="lazy"/>
+              </div>
+              <div class="bl-cmdk-meta">
+                <div class="bl-cmdk-title">{{ book.metadata?.title }}</div>
+                <div class="bl-cmdk-sub">{{ book.metadata?.authors?.join(', ') }}{{ book.metadata?.categories?.length ? ' · ' + book.metadata!.categories![0] : '' }}</div>
+              </div>
+              <span class="bl-cmdk-hint">↩</span>
+            </div>
+          }
+        }
+
+        @if (filteredPages.length > 0) {
+          <div class="bl-cmdk-section">Navigate</div>
+          @for (page of filteredPages; track page.id; let i = $index) {
+            <div class="bl-cmdk-item"
+                 [class.active]="activeIndex === filteredBooks.length + i"
+                 (click)="selectPage(page)"
+                 (mouseenter)="activeIndex = filteredBooks.length + i">
+              <i [class]="page.icon + ' bl-cmdk-nav-icon'"></i>
+              <div class="bl-cmdk-meta">
+                <div class="bl-cmdk-title">{{ page.label }}</div>
+              </div>
+            </div>
+          }
+        }
+
+        @if (filteredBooks.length === 0 && filteredPages.length === 0) {
+          <div class="bl-cmdk-empty">No results for "{{ query }}"</div>
+        }
+      </div>
+    </div>
+  </div>
+}
