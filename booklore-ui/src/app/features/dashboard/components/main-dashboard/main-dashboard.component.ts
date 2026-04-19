@@ -7,6 +7,9 @@ import {Button} from 'primeng/button';
 import {AsyncPipe} from '@angular/common';
 import {DashboardScrollerComponent} from '../dashboard-scroller/dashboard-scroller.component';
 import {DashboardHeroComponent} from '../dashboard-hero/dashboard-hero.component';
+import {DashboardActivityHeatmapComponent} from '../dashboard-activity-heatmap/dashboard-activity-heatmap.component';
+import {DashboardYearlyGoalComponent} from '../dashboard-yearly-goal/dashboard-yearly-goal.component';
+import {DashboardTopGenresComponent} from '../dashboard-top-genres/dashboard-top-genres.component';
 import {BookService} from '../../../book/service/book.service';
 import {BookState} from '../../../book/model/state/book-state.model';
 import {Book, ReadStatus} from '../../../book/model/book.model';
@@ -38,6 +41,9 @@ const DEFAULT_MAX_ITEMS = 20;
     Button,
     DashboardScrollerComponent,
     DashboardHeroComponent,
+    DashboardActivityHeatmapComponent,
+    DashboardYearlyGoalComponent,
+    DashboardTopGenresComponent,
     AsyncPipe,
     ProgressSpinner,
     TooltipModule,

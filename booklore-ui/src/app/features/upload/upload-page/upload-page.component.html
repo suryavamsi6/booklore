@@ -1,0 +1,30 @@
+<div class="bl-upload-page">
+  <div class="bl-upload-head">
+    <h1 class="bl-upload-title">Upload Books</h1>
+    <p class="bl-upload-sub">Add EPUB, PDF, CBZ, audiobooks, and more to your library.</p>
+  </div>
+
+  <div class="bl-dropzone"
+       [class.bl-dropzone--over]="isDragOver"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave()"
+       (drop)="onDrop($event)"
+       (click)="openUploader()">
+    <div class="bl-dropzone-icon">
+      <i class="pi pi-cloud-upload"></i>
+    </div>
+    <h2 class="bl-dropzone-label">Drop files to upload</h2>
+    <p class="bl-dropzone-hint">EPUB · PDF · CBZ · CBR · MOBI · AZW3 · M4B · MP3</p>
+    <div class="bl-dropzone-actions">
+      <button type="button" class="bl-btn bl-btn--primary" (click)="$event.stopPropagation(); openUploader()">
+        <i class="pi pi-folder-open"></i>
+        Browse files
+      </button>
+    </div>
+  </div>
+
+  <p class="bl-upload-footnote">
+    <i class="pi pi-info-circle"></i>
+    Metadata will be automatically fetched from configured providers after upload.
+  </p>
+</div>

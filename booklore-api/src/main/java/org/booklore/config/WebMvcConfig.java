@@ -41,6 +41,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResolver(new PathResourceResolver() {
                     @Override
                     protected Resource getResource(String resourcePath, Resource location) throws IOException {
+                        // Don't serve index.html for API routes or actuator endpoints
+                        if (resourcePath.startsWith("api/") || resourcePath.startsWith("actuator") || resourcePath.startsWith("komga/")) {
+                            return null;
+                        }
                         Resource resource = location.createRelative(resourcePath);
                         return resource.exists() && resource.isReadable()
                                 ? resource

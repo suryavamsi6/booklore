@@ -51,6 +51,7 @@ export const routes: Routes = [
       {path: 'library-stats', loadComponent: () => import('./features/stats/component/library-stats/library-stats.component').then(m => m.LibraryStatsComponent), canActivate: [LibraryStatsGuard]},
       {path: 'reading-stats', loadComponent: () => import('./features/stats/component/user-stats/user-stats.component').then(m => m.UserStatsComponent), canActivate: [UserStatsGuard]},
       {path: 'notebook', loadComponent: () => import('./features/notebook/components/notebook/notebook.component').then(m => m.NotebookComponent), canActivate: [AuthGuard]},
+      {path: 'upload', loadComponent: () => import('./features/upload/upload-page/upload-page.component').then(m => m.UploadPageComponent), canActivate: [AuthGuard]},
     ]
   },
   {

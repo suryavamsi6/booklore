@@ -25,6 +25,7 @@
     "@iharbeck/ngx-virtual-scroller": "^20.0.0",
     "@jsverse/transloco": "^8.2.1",
     "@primeuix/themes": "^2.0.3",
+    "@rollup/rollup-linux-x64-musl": "^4.60.1",
     "@stomp/rx-stomp": "^2.3.0",
     "@stomp/stompjs": "^7.3.0",
     "@tweenjs/tween.js": "^25.0.0",

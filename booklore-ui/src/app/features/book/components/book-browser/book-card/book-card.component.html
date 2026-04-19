@@ -2,6 +2,10 @@
      [class.selected]="isSelected"
      (click)="onCardClick($event)">
 
+  <!-- Menus hoisted so both QA overlay and bottom bar can reference them -->
+  <p-tieredmenu #menu [model]="items" [popup]="true" appendTo="body" (onShow)="onMenuShow()" (onHide)="onMenuHide()"></p-tieredmenu>
+  <p-tieredmenu #readStatusMenu [model]="readStatusMenuItems" [popup]="true" appendTo="body"></p-tieredmenu>
+
   <div class="cover-container" [ngClass]="{ 'center-info-btn': _isSeriesViewActive || !hasDigitalFile(), 'loaded': isImageLoaded, 'audiobook-cover': _isAudiobook, 'square-library-cover': useSquareCovers }">
     <img
       [src]="coverImageUrl"
@@ -12,6 +16,10 @@
       loading="lazy"
       decoding="async"
       (load)="onImageLoad()"/>
+
+    <!-- Book spine shadow + glare highlight -->
+    <div class="bl-spine"></div>
+    <div class="bl-glare"></div>
 
     <div class="top-left-overlay-stack">
       @if (showBookTypePill && displayFormat; as displayFormat) {
@@ -55,6 +63,16 @@
       </p-checkbox>
     }
 
+    <!-- Quick-actions overlay: heart stub + dots opens context menu -->
+    <div class="bl-qa" [class.bl-qa-checkbox-mode]="isCheckboxEnabled">
+      <button class="bl-qa-btn" title="Favorite" (click)="$event.stopPropagation()">
+        <i class="pi pi-heart"></i>
+      </button>
+      <button class="bl-qa-btn" title="More actions" (click)="$event.stopPropagation(); onMenuToggle($event, menu)">
+        <i class="pi pi-ellipsis-h"></i>
+      </button>
+    </div>
+
     @if (hasProgress) {
       <div class="cover-progress-bar-container" [pTooltip]="progressTooltip" tooltipPosition="top">
         @if (_progressPercentage !== null) {
@@ -95,21 +113,26 @@
            [attr.aria-label]="'book.card.alt.readStatusMenu' | transloco">
         <i [class]="_readStatusIcon" style="font-size: 0.9rem"></i>
       </div>
-      <p-tieredmenu #readStatusMenu [model]="readStatusMenuItems" [popup]="true" appendTo="body"></p-tieredmenu>
-      <h4 class="book-title"
-          tooltipPosition="bottom"
-          [pTooltip]="titleTooltip">
-        {{ displayTitle }}
-      </h4>
-      <p-tieredmenu #menu [model]="items" [popup]="true" appendTo="body" (onShow)="onMenuShow()" (onHide)="onMenuHide()"></p-tieredmenu>
-      <p-button
-        class="custom-button-padding"
-        size="small"
-        [text]="true"
-        (click)="onMenuToggle($event, menu)"
-        icon="pi pi-ellipsis-v"
-        [ariaLabel]="'book.card.alt.bookMenu' | transloco">
-      </p-button>
+      <div class="bl-meta-wrap">
+        <h4 class="book-title"
+            tooltipPosition="bottom"
+            [pTooltip]="titleTooltip">
+          {{ displayTitle }}
+        </h4>
+        @if (book.metadata?.authors?.length) {
+          <div class="book-author">{{ book.metadata!.authors!.join(', ') }}</div>
+        }
+      </div>
+      @if (isCheckboxEnabled) {
+        <p-button
+          class="custom-button-padding"
+          size="small"
+          [text]="true"
+          (click)="onMenuToggle($event, menu)"
+          icon="pi pi-ellipsis-v"
+          [ariaLabel]="'book.card.alt.bookMenu' | transloco">
+        </p-button>
+      }
     </div>
   }
 </div>
