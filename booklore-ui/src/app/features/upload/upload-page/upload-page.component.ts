@@ -28,6 +28,6 @@ export class UploadPageComponent {
   onDrop(e: DragEvent): void {
     e.preventDefault();
     this.isDragOver = false;
-    this.dialogLauncher.openBookUploaderDialog();
+    this.dialogLauncher.openFileUploadDialog();
   }
 }

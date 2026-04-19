@@ -93,6 +93,8 @@ export class SeriesBrowserComponent implements OnInit {
     return `${this.cardWidth}px`;
   }
 
+  viewMode: 'stacks' | 'list' = 'stacks';
+
   // Search and filter state
   searchTerm$ = new BehaviorSubject<string>('');
   statusFilter$ = new BehaviorSubject<string>('all');

@@ -1,0 +1,15 @@
+{
+  "placeholder": "Search books, pages...",
+  "sectionBooks": "Books",
+  "sectionNavigate": "Navigate",
+  "noResults": "No results",
+  "hint": "Type to search",
+  "pages": {
+    "dashboard": "Dashboard",
+    "library": "All Books",
+    "series": "Series",
+    "authors": "Authors",
+    "upload": "Upload Books",
+    "settings": "Settings"
+  }
+}
